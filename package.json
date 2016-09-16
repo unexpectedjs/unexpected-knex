@@ -37,9 +37,8 @@
   "nyc": {
     "all": true,
     "cache": true,
-    "exclude": [
-      "**/*.spec.js",
-      "node_modules"
+    "include": [
+      "lib/unexpected-knex.js"
     ]
   },
   "directories": {
