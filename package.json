@@ -4,7 +4,8 @@
   "description": "Support for testing knex migrations using Unexpected",
   "main": "lib/unexpected-knex.js",
   "scripts": {
-    "test": "nyc mocha test/**/*.spec.js"
+    "test": "nyc mocha test/**/*.spec.js",
+    "coverage": "npm run test && nyc report --reporter=html && sensible-browser ./coverage/index.html"
   },
   "keywords": [
     "test",
