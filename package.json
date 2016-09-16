@@ -1,0 +1,34 @@
+{
+  "name": "unexpected-knex",
+  "version": "1.0.0",
+  "description": "Support for testing knex migrations using Unexpected",
+  "main": "lib/unexpected-knex.js",
+  "scripts": {
+    "test": "nyc mocha test/**/*.spec.js"
+  },
+  "keywords": [
+    "test",
+    "testing",
+    "migrations",
+    "knex",
+    "unexpected"
+  ],
+  "author": {
+    "name": "Joel Mukuthu",
+    "email": "joelmukuthu@gmail.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "unexpected-fs": "2.5.2"
+  },
+  "peerDependencies": {
+    "unexpected": "10.17.2"
+  },
+  "devDependencies": {
+    "eslint": "3.5.0",
+    "eslint-config-onelint": "1.1.0",
+    "mocha": "3.0.2",
+    "nyc": "8.1.0",
+    "unexpected": "10.17.2"
+  }
+}
