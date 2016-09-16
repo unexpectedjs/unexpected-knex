@@ -33,5 +33,13 @@
     "nyc": "8.1.0",
     "unexpected": "10.17.2",
     "unexpected-fs": "2.5.2"
+  },
+  "nyc": {
+    "all": true,
+    "cache": true,
+    "exclude": [
+      "**/*.spec.js",
+      "node_modules"
+    ]
   }
 }
