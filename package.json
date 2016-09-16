@@ -22,13 +22,16 @@
     "unexpected-fs": "2.5.2"
   },
   "peerDependencies": {
+    "knex": "0.12.0",
     "unexpected": "10.17.2"
   },
   "devDependencies": {
     "eslint": "3.5.0",
     "eslint-config-onelint": "1.1.0",
+    "knex": "0.12.0",
     "mocha": "3.0.2",
     "nyc": "8.1.0",
-    "unexpected": "10.17.2"
+    "unexpected": "10.17.2",
+    "unexpected-fs": "2.5.2"
   }
 }
