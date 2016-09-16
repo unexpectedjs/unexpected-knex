@@ -5,7 +5,8 @@
   "main": "lib/unexpected-knex.js",
   "scripts": {
     "test": "nyc mocha test/**/*.spec.js",
-    "coverage": "npm run test && nyc report --reporter=html && sensible-browser ./coverage/index.html"
+    "coverage": "npm run test && nyc report --reporter=html && sensible-browser ./coverage/index.html",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "test",
@@ -27,6 +28,7 @@
     "unexpected": "10.17.2"
   },
   "devDependencies": {
+    "coveralls": "2.11.12",
     "eslint": "3.5.0",
     "eslint-config-onelint": "1.1.0",
     "knex": "0.12.0",
