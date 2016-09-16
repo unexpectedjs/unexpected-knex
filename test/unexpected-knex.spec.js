@@ -9,7 +9,7 @@ describe('unexpected-knex', function () {
                 unexpectedKnex();
             },
             'to error with',
-            'Please provide a config ({ knex, migrationsDir }) object'
+            'Provide a config ({ knex, migrationsDir }) object'
         );
     });
 
@@ -19,7 +19,7 @@ describe('unexpected-knex', function () {
                 unexpectedKnex({});
             },
             'to error with',
-            'Please provide a knex instance (config.knex)'
+            'Provide a knex instance (config.knex)'
         );
     });
 
@@ -31,7 +31,7 @@ describe('unexpected-knex', function () {
                 });
             },
             'to error with',
-            'Please provide a valid knex instance'
+            'Provide a valid knex instance'
         );
     });
 
@@ -43,7 +43,7 @@ describe('unexpected-knex', function () {
                 });
             },
             'to error with',
-            'Please provide a path to the migrations directory (config.migrationsDir)'
+            'Provide a path to the migrations directory (config.migrationsDir)'
         );
     });
 
@@ -56,7 +56,7 @@ describe('unexpected-knex', function () {
                 });
             },
             'to error with',
-            'Please provide a path to the migrations directory (config.migrationsDir)'
+            'Provide a path to the migrations directory (config.migrationsDir)'
         );
     });
 
@@ -69,11 +69,11 @@ describe('unexpected-knex', function () {
                 });
             },
             'to error with',
-            'Please provide a valid path to the migrations directory'
+            'Provide a valid path to the migrations directory'
         );
     });
 
-    it('throws if not the path to the migrations directory is does not exist', function () {
+    it('throws if the path to the migrations directory is does not exist', function () {
         return expect(
             function () {
                 unexpectedKnex({
@@ -83,30 +83,28 @@ describe('unexpected-knex', function () {
             },
             'with fs mocked out', {},
             'to error with',
-            'ENOENT: no such file or directory, scandir \'/non/existent\''
+            'ENOENT: no such file or directory, stat \'/non/existent\''
         );
     });
 
-    it('gets migration files from the configured migrations directory', function () {
+    it('throws if the path to the migrations directory is not a directory', function () {
         return expect(
             function () {
-                return expect(unexpectedKnex({
+                unexpectedKnex({
                     knex: knex({}),
-                    migrationsDir: '/migrations'
-                }), 'to satisfy', {
-                    migrationFiles: expect.it('when sorted', 'to equal', [
-                        'bar.js',
-                        'foo.js'
-                    ])
+                    migrationsDir: '/path/to/file'
                 });
             },
             'with fs mocked out', {
-                '/migrations': {
-                    'foo.js': 'foo',
-                    'bar.js': 'bar'
+                '/path/to': {
+                    '/file': {
+                        _isFile: true,
+                        content: 'foo'
+                    }
                 }
             },
-            'not to error'
+            'to error with',
+            'Provide a valid path to the migrations directory'
         );
     });
 });
