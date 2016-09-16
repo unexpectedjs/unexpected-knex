@@ -15,10 +15,7 @@
     "knex",
     "unexpected"
   ],
-  "author": {
-    "name": "Joel Mukuthu",
-    "email": "joelmukuthu@gmail.com"
-  },
+  "author": "Joel Mukuthu <joelmukuthu@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "unexpected-fs": "2.5.2"
@@ -44,5 +41,16 @@
       "**/*.spec.js",
       "node_modules"
     ]
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/unexpectedjs/unexpected-knex.git"
+  },
+  "bugs": {
+    "url": "https://github.com/unexpectedjs/unexpected-knex/issues"
+  },
+  "homepage": "https://github.com/unexpectedjs/unexpected-knex#readme"
 }
