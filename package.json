@@ -1,7 +1,7 @@
 {
   "name": "unexpected-knex",
   "version": "1.0.0",
-  "description": "Support for testing knex migrations using Unexpected",
+  "description": "Support for testing Knex.js migrations using Unexpected",
   "main": "lib/unexpected-knex.js",
   "scripts": {
     "test": "nyc mocha test/**/*.spec.js",
