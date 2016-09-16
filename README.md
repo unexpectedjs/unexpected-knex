@@ -5,4 +5,4 @@
 [![Dependency Status](https://david-dm.org/unexpectedjs/unexpected-knex.svg)](https://david-dm.org/unexpectedjs/unexpected-knex)
 
 Provides support for testing [Knex.js](http://knexjs.org/) database migrations
-using Unexpected.
+using [Unexpected](http://unexpected.js.org/).
