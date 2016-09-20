@@ -1,110 +1,100 @@
-var knex = require('knex');
-var expect = require('unexpected').clone().use(require('unexpected-fs'));
-var unexpectedKnex = require('../lib/unexpected-knex');
+const sqlite3 = require('sqlite3');
+const knexModule = require('knex');
+const unexpected = require('unexpected');
+const unexpectedFs = require('unexpected-fs');
+const unexpectedRequire = require('unexpected-require');
+const unexpectedKnexFactory = require('../lib/unexpected-knex');
 
 describe('unexpected-knex', function () {
-    it('throws if not provided a config object', function () {
-        return expect(
-            function () {
-                unexpectedKnex();
-            },
-            'to error with',
-            'Provide a config ({ knex, migrationsDir }) object'
-        );
+    describe('on initialization', function () {
+        const expect = unexpected.clone();
+
+        it('throws if not provided a knex instance', function () {
+            return expect(
+                function () {
+                    unexpectedKnexFactory();
+                },
+                'to error with',
+                'No knex instance provided'
+            );
+        });
+
+        it('throws if not provided a valid knex instance', function () {
+            return expect(
+                function () {
+                    unexpectedKnexFactory(function () {});
+                },
+                'to error with',
+                'Invalid knex instance provided'
+            );
+        });
     });
 
-    it('throws if not provided a knex instance in the config', function () {
-        return expect(
-            function () {
-                unexpectedKnex({});
+    describe('after initialization', function () {
+        const db = new sqlite3.Database(':memory:');
+        const knex = knexModule({
+            client: 'sqlite3',
+            connection: {
+                filename: ':memory:'
             },
-            'to error with',
-            'Provide a knex instance (config.knex)'
-        );
-    });
-
-    it('throws if provided a non-valid knex instance in the config', function () {
-        return expect(
-            function () {
-                unexpectedKnex({
-                    knex: function () {}
-                });
-            },
-            'to error with',
-            'Provide a valid knex instance'
-        );
-    });
-
-    it('throws if not provided a path to the migrations directory', function () {
-        return expect(
-            function () {
-                unexpectedKnex({
-                    knex: knex({})
-                });
-            },
-            'to error with',
-            'Provide a path to the migrations directory (config.migrationsDir)'
-        );
-    });
-
-    it('throws if the path to the migrations directory is falsy', function () {
-        return expect(
-            function () {
-                unexpectedKnex({
-                    knex: knex({}),
-                    migrationsDir: ''
-                });
-            },
-            'to error with',
-            'Provide a path to the migrations directory (config.migrationsDir)'
-        );
-    });
-
-    it('throws if the path to the migrations directory is not a string', function () {
-        return expect(
-            function () {
-                unexpectedKnex({
-                    knex: knex({}),
-                    migrationsDir: true
-                });
-            },
-            'to error with',
-            'Provide a valid path to the migrations directory'
-        );
-    });
-
-    it('throws if the path to the migrations directory is does not exist', function () {
-        return expect(
-            function () {
-                unexpectedKnex({
-                    knex: knex({}),
-                    migrationsDir: '/non/existent'
-                });
-            },
-            'with fs mocked out', {},
-            'to error with',
-            'ENOENT: no such file or directory, stat \'/non/existent\''
-        );
-    });
-
-    it('throws if the path to the migrations directory is not a directory', function () {
-        return expect(
-            function () {
-                unexpectedKnex({
-                    knex: knex({}),
-                    migrationsDir: '/path/to/file'
-                });
-            },
-            'with fs mocked out', {
-                '/path/to': {
-                    '/file': {
-                        _isFile: true,
-                        content: 'foo'
-                    }
+            migrations: {
+                directory: '/path/to/migrations'
+            }
+        });
+        const unexpectedKnex = unexpectedKnexFactory(knex);
+        const expect = unexpected.clone()
+            .use(unexpectedFs)
+            .use(unexpectedRequire)
+            .use(unexpectedKnex)
+            .addType({
+                name: 'unexpectedKnex',
+                base: 'object',
+                identify: function (value) {
+                    return value &&
+                        value.name === 'unexpected-knex' &&
+                        typeof value.installInto === 'function';
+                },
+                inspect: function (value, depth, output, inspect) {
+                    output.appendInspected('unexpected-knex');
                 }
-            },
-            'to error with',
-            'Provide a valid path to the migrations directory'
-        );
+            })
+            .addAssertion(
+                '<unexpectedKnex> to apply migration <migration>',
+                function (expect, unexpectedKnex, migration) {
+                    expect.errorMode = 'nested';
+                    const filename = migration.name;
+                    return expect(
+                        migration,
+                        'with fs mocked out', {
+                            '/path/to/migrations': {
+                                [filename]: ''
+                            }
+                        },
+                        'with require mocked out', {
+                            [`/path/to/migrations/${filename}`]: migration
+                        },
+                        'to apply'
+                    );
+                }
+            );
+
+        after(function () {
+            db.close();
+        });
+
+        describe('<migration> to apply', function () {
+            it('applies a migration', function () {
+                const migration = {
+                    up: knex => knex.schema.createTable('foo', table => {
+                        table.timestamps();
+                    }),
+                    down: knex => knex.schema.dropTable('foo'),
+                    name: '1-foo.js'
+                };
+                return expect(unexpectedKnex, 'to apply migration', migration)
+                    .then(() => expect(knex, 'to have table', 'foo'))
+                    .then(() => knex.schema.dropTable('foo'));
+            });
+        });
     });
 });
