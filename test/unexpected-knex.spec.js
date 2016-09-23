@@ -19,7 +19,8 @@ describe('unexpected-knex', function () {
                 },
                 migrations: {
                     directory: '/path/to/migrations'
-                }
+                },
+                useNullAsDefault: true
             });
 
             const migration = {
