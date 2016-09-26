@@ -10,7 +10,7 @@ const expect = unexpected.clone()
     .use(unexpectedKnex);
 
 describe('unexpected-knex', function () {
-    describe('<knex> to apply migration <migration>', function () {
+    describe('<knex> to apply migration <string>', function () {
         it('applies a migration', function () {
             const knex = knexFactory({
                 client: 'sqlite3',
@@ -18,29 +18,28 @@ describe('unexpected-knex', function () {
                     filename: ':memory:'
                 },
                 migrations: {
-                    directory: '/path/to/migrations'
+                    directory: './migrations'
                 },
                 useNullAsDefault: true
             });
-
-            const migration = {
-                up: knex => knex.schema.createTable('foo', table => {
-                    table.timestamps();
-                }),
-                down: knex => knex.schema.dropTable('foo'),
-                name: '1-foo.js'
-            };
+            // synonymous to './migrations' as specified in the knex config
+            const migrationsDirectory = `${process.cwd()}/migrations`;
 
             return expect(knex,
                 'with fs mocked out', {
-                    '/path/to/migrations': {
+                    [migrationsDirectory]: {
                         '1-foo.js': ''
                     }
                 },
                 'with require mocked out', {
-                    '/path/to/migrations/1-foo.js': migration
+                    [`${migrationsDirectory}/1-foo.js`]: {
+                        up: knex => knex.schema.createTable('foo', table => {
+                            table.timestamps();
+                        }),
+                        down: knex => knex.schema.dropTable('foo')
+                    }
                 },
-                'to apply migration', migration
+                'to apply migration', '1-foo.js'
             )
             .then(() => expect(knex, 'to have table', 'foo'))
             .then(() => knex.schema.dropTable('foo'));
