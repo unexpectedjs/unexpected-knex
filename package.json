@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "coveralls": "2.11.12",
+    "dedent-js": "1.0.1",
     "eslint": "3.5.0",
     "eslint-config-onelint": "1.1.0",
     "knex": "0.12.0",
