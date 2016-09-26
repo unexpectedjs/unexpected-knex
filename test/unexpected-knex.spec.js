@@ -11,27 +11,51 @@ const expect = unexpected.clone()
     .use(unexpectedKnex);
 
 describe('unexpected-knex', function () {
-    describe('<knex> to apply migration <string>', function () {
-        const knex = knexFactory({
-            client: 'sqlite3',
-            connection: {
-                filename: ':memory:'
-            },
-            migrations: {
-                directory: './migrations'
-            },
-            useNullAsDefault: true
-        });
-        // synonymous to './migrations' as specified in the knex config
-        const migrationsDirectory = `${process.cwd()}/migrations`;
-        const knexOutputBlock = dontIndent`
-            knex({
-              client: 'sqlite3',
-              connection: { filename: ':memory:' },
-              migrations: { directory: './migrations' },
-              useNullAsDefault: true
-            })`;
+    const knex = knexFactory({
+        client: 'sqlite3',
+        connection: {
+            filename: ':memory:'
+        },
+        migrations: {
+            directory: './migrations'
+        },
+        useNullAsDefault: true
+    });
+    // synonymous to './migrations' as specified in the knex config
+    const migrationsDirectory = `${process.cwd()}/migrations`;
+    const knexOutputBlock = dontIndent`
+        knex({
+          client: 'sqlite3',
+          connection: { filename: ':memory:' },
+          migrations: { directory: './migrations' },
+          useNullAsDefault: true
+        })`;
 
+    describe('<knex> to have table <string>', function () {
+        it('fulfils if the table exists', function () {
+            return knex.schema.createTable('foo', table => {
+                table.timestamps();
+            })
+            .then(() => expect(
+                expect(knex, 'to have table', 'foo'),
+                'to be fulfilled'
+            ))
+            .then(() => knex.schema.dropTable('foo'));
+        });
+
+        it('rejects if the table does not exist', function () {
+            return expect(
+                expect(knex, 'to have table', 'foo'),
+                'to be rejected with',
+                dontIndent`
+                expected
+                ${knexOutputBlock}
+                to have table 'foo'`
+            );
+        });
+    });
+
+    describe('<knex> to apply migration <string>', function () {
         it('applies a migration', function () {
             return expect(knex,
                 'with fs mocked out', {
