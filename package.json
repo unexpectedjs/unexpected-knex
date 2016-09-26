@@ -34,7 +34,6 @@
     "unexpected-require": "2.0.0"
   },
   "nyc": {
-    "all": true,
     "cache": true,
     "include": [
       "lib/unexpected-knex.js"
