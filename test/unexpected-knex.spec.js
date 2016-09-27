@@ -509,7 +509,7 @@ describe('unexpected-knex', function () {
         });
     });
 
-    describe('<knexQuery> to satisfy <array>', function () {
+    describe('<knexQuery> to have rows satisfying <array>', function () {
         it('runs query.select() and asserts the data returned against the array', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
@@ -519,7 +519,7 @@ describe('unexpected-knex', function () {
                 { bar: 'foobar2' }
             ]))
             .then(() => expect(
-                expect(knex('foo'), 'to satisfy', [
+                expect(knex('foo'), 'to have rows satisfying', [
                     { bar: 'foobar1' },
                     { bar: 'foobar2' }
                 ]),
@@ -534,7 +534,7 @@ describe('unexpected-knex', function () {
             })
             .then(() => knex('foo').insert({ bar: 'foobar1' }))
             .then(() => expect(
-                expect(knex('foo'), 'to satisfy', [
+                expect(knex('foo'), 'to have rows satisfying', [
                     { bar: 'foobar1' }
                 ]),
                 'to be fulfilled'
@@ -547,7 +547,7 @@ describe('unexpected-knex', function () {
                 table.string('bar');
             })
             .then(() => expect(
-                expect(knex('foo'), 'to satisfy', []),
+                expect(knex('foo'), 'to have rows satisfying', []),
                 'to be fulfilled'
             ))
             .then(() => knex.schema.dropTable('foo'));
@@ -562,14 +562,14 @@ describe('unexpected-knex', function () {
                 { bar: 'foobar2' }
             ]))
             .then(() => expect(
-                expect(knex('foo'), 'to satisfy', [
+                expect(knex('foo'), 'to have rows satisfying', [
                     { bar: 'foobar1' },
                     { bar: 'foobar20' }
                 ]),
                 'to be rejected with',
                 dontIndent`
                 expected 'select * from "foo"'
-                to satisfy [ { bar: 'foobar1' }, { bar: 'foobar20' } ]
+                to have rows satisfying [ { bar: 'foobar1' }, { bar: 'foobar20' } ]
 
                 [
                   { bar: 'foobar1' },
@@ -593,10 +593,10 @@ describe('unexpected-knex', function () {
                 { bar: 'foobar2' }
             ]))
             .then(() => expect(
-                expect(knex('foo'), 'to satisfy', []),
+                expect(knex('foo'), 'to have rows satisfying', []),
                 'to be rejected with',
                 dontIndent`
-                expected 'select * from "foo"' to satisfy []
+                expected 'select * from "foo"' to have rows satisfying []
 
                 [
                   { bar: 'foobar1' }, // should be removed
@@ -607,7 +607,7 @@ describe('unexpected-knex', function () {
         });
     });
 
-    describe('<knexQuery> to satisfy <expect.it>', function () {
+    describe('<knexQuery> to have rows satisfying <expect.it>', function () {
         it('runs query.select() and asserts the data returned against the assertion', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
@@ -617,7 +617,7 @@ describe('unexpected-knex', function () {
                 { bar: 'foobar2' }
             ]))
             .then(() => expect(
-                expect(knex('foo'), 'to satisfy', expect.it('to equal', [
+                expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [
                     { bar: 'foobar1' },
                     { bar: 'foobar2' }
                 ])),
@@ -632,7 +632,7 @@ describe('unexpected-knex', function () {
             })
             .then(() => knex('foo').insert({ bar: 'foobar1' }))
             .then(() => expect(
-                expect(knex('foo'), 'to satisfy', expect.it('to equal', [
+                expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [
                     { bar: 'foobar1' }
                 ])),
                 'to be fulfilled'
@@ -645,7 +645,7 @@ describe('unexpected-knex', function () {
                 table.string('bar');
             })
             .then(() => expect(
-                expect(knex('foo'), 'to satisfy', expect.it('to equal', [])),
+                expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [])),
                 'to be fulfilled'
             ))
             .then(() => knex.schema.dropTable('foo'));
@@ -660,14 +660,14 @@ describe('unexpected-knex', function () {
                 { bar: 'foobar2' }
             ]))
             .then(() => expect(
-                expect(knex('foo'), 'to satisfy', expect.it('to equal', [
+                expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [
                     { bar: 'foobar1' },
                     { bar: 'foobar20' }
                 ])),
                 'to be rejected with',
                 dontIndent`
                 expected 'select * from "foo"'
-                to satisfy expect.it('to equal', [ { bar: 'foobar1' }, { bar: 'foobar20' } ])
+                to have rows satisfying expect.it('to equal', [ { bar: 'foobar1' }, { bar: 'foobar20' } ])
 
                 expected [ { bar: 'foobar1' }, { bar: 'foobar2' } ]
                 to equal [ { bar: 'foobar1' }, { bar: 'foobar20' } ]
@@ -694,10 +694,10 @@ describe('unexpected-knex', function () {
                 { bar: 'foobar2' }
             ]))
             .then(() => expect(
-                expect(knex('foo'), 'to satisfy', expect.it('to equal', [])),
+                expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [])),
                 'to be rejected with',
                 dontIndent`
-                expected 'select * from "foo"' to satisfy expect.it('to equal', [])
+                expected 'select * from "foo"' to have rows satisfying expect.it('to equal', [])
 
                 expected [ { bar: 'foobar1' }, { bar: 'foobar2' } ] to equal []
 
@@ -710,14 +710,14 @@ describe('unexpected-knex', function () {
         });
     });
 
-    describe('<knexQuery> to satisfy <object>', function () {
+    describe('<knexQuery> to have a row satisfying <object>', function () {
         it('runs query.select() and asserts the data returned against the object', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
             .then(() => knex('foo').insert({ bar: 'foobar1' }))
             .then(() => expect(
-                expect(knex('foo'), 'to satisfy', { bar: 'foobar1' }),
+                expect(knex('foo'), 'to have a row satisfying', { bar: 'foobar1' }),
                 'to be fulfilled'
             ))
             .then(() => knex.schema.dropTable('foo'));
@@ -732,7 +732,7 @@ describe('unexpected-knex', function () {
                 { bar: 'foobar2' }
             ]))
             .then(() => expect(
-                expect(knex('foo'), 'to satisfy', { bar: 'foobar2' }),
+                expect(knex('foo'), 'to have a row satisfying', { bar: 'foobar2' }),
                 'to be fulfilled'
             ))
             .then(() => knex.schema.dropTable('foo'));
@@ -747,10 +747,10 @@ describe('unexpected-knex', function () {
                 { bar: 'foobar2' }
             ]))
             .then(() => expect(
-                () => expect(knex('foo'), 'to satisfy', {}),
+                () => expect(knex('foo'), 'to have a row satisfying', {}),
                 'to be rejected with',
                 dontIndent`
-                expected 'select * from "foo"' to satisfy {}
+                expected 'select * from "foo"' to have a row satisfying {}
                   cannot assert that a row has no columns or fields`
             ))
             .then(() => knex.schema.dropTable('foo'));
@@ -765,10 +765,10 @@ describe('unexpected-knex', function () {
                 { bar: 'foobar2' }
             ]))
             .then(() => expect(
-                expect(knex('foo'), 'to satisfy', { bar: 'foobar20' }),
+                expect(knex('foo'), 'to have a row satisfying', { bar: 'foobar20' }),
                 'to be rejected with',
                 dontIndent`
-                expected 'select * from "foo"' to satisfy { bar: 'foobar20' }
+                expected 'select * from "foo"' to have a row satisfying { bar: 'foobar20' }
 
                 expected [ { bar: 'foobar1' }, { bar: 'foobar2' } ]
                 to have an item satisfying { bar: 'foobar20' }`
