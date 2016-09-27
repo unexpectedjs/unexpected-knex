@@ -710,6 +710,73 @@ describe('unexpected-knex', function () {
         });
     });
 
+    describe('<knexQuery> to satisfy <object>', function () {
+        it('runs query.select() and asserts the data returned against the object', function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => knex('foo').insert({ bar: 'foobar1' }))
+            .then(() => expect(
+                expect(knex('foo'), 'to satisfy', { bar: 'foobar1' }),
+                'to be fulfilled'
+            ))
+            .then(() => knex.schema.dropTable('foo'));
+        });
+
+        it(`asserts that at least one record in the table satisfies the object`, function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => knex('foo').insert([
+                { bar: 'foobar1' },
+                { bar: 'foobar2' }
+            ]))
+            .then(() => expect(
+                expect(knex('foo'), 'to satisfy', { bar: 'foobar2' }),
+                'to be fulfilled'
+            ))
+            .then(() => knex.schema.dropTable('foo'));
+        });
+
+        it(`does not assert against an empty object`, function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => knex('foo').insert([
+                { bar: 'foobar1' },
+                { bar: 'foobar2' }
+            ]))
+            .then(() => expect(
+                () => expect(knex('foo'), 'to satisfy', {}),
+                'to be rejected with',
+                dontIndent`
+                expected 'select * from "foo"' to satisfy {}
+                  cannot assert that a row has no columns or fields`
+            ))
+            .then(() => knex.schema.dropTable('foo'));
+        });
+
+        it(`rejects with the correct error if the data doesn't match`, function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => knex('foo').insert([
+                { bar: 'foobar1' },
+                { bar: 'foobar2' }
+            ]))
+            .then(() => expect(
+                expect(knex('foo'), 'to satisfy', { bar: 'foobar20' }),
+                'to be rejected with',
+                dontIndent`
+                expected 'select * from "foo"' to satisfy { bar: 'foobar20' }
+
+                expected [ { bar: 'foobar1' }, { bar: 'foobar2' } ]
+                to have an item satisfying { bar: 'foobar20' }`
+            ))
+            .then(() => knex.schema.dropTable('foo'));
+        });
+    });
+
     describe('<knex> to apply migration <string>', function () {
         it('applies a migration', function () {
             return expect(knex,
