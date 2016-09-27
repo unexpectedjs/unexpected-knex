@@ -1,4 +1,5 @@
-const knexFactory = require('knex');
+const Knex = require('knex');
+const QueryBuilder = require('knex/lib/query/builder');
 const unexpected = require('unexpected');
 const unexpectedFs = require('unexpected-fs');
 const unexpectedRequire = require('unexpected-require');
@@ -11,7 +12,7 @@ const expect = unexpected.clone()
     .use(unexpectedKnex);
 
 describe('unexpected-knex', function () {
-    const knex = knexFactory({
+    const knex = Knex({
         client: 'sqlite3',
         connection: {
             filename: ':memory:'
@@ -478,6 +479,32 @@ describe('unexpected-knex', function () {
             return expect(
                 expect(knex, 'not to have columns', { foo: 'bar', bar: 'quux' }),
                 'to be fulfilled'
+            );
+        });
+    });
+
+    describe('<knex> with table <string> <assertion?>', function () {
+        it('passes a knex query to the next assertion', function () {
+            return expect(knex, 'with table', 'foo', 'to be a', QueryBuilder);
+        });
+
+        it('populates the query with the table provided', function () {
+            return expect(
+                knex, 'with table', 'foo',
+                'when passed as parameter to',
+                query => query.toQuery(),
+                'to be', `select * from "foo"`
+            );
+        });
+
+        it('resolves with the query if no assertion is provided', function () {
+            return expect(
+                expect(knex, 'with table', 'foo'),
+                'to be a', QueryBuilder
+            ).and(
+                'when passed as parameter to',
+                query => query.toQuery(),
+                'to be', `select * from "foo"`
             );
         });
     });
