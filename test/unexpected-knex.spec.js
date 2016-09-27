@@ -509,6 +509,104 @@ describe('unexpected-knex', function () {
         });
     });
 
+    describe('<knexQuery> to satisfy <array>', function () {
+        it('runs query.select() and asserts the data returned against the array', function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => knex('foo').insert([
+                { bar: 'foobar1' },
+                { bar: 'foobar2' }
+            ]))
+            .then(() => expect(
+                expect(knex('foo'), 'to satisfy', [
+                    { bar: 'foobar1' },
+                    { bar: 'foobar2' }
+                ]),
+                'to be fulfilled'
+            ))
+            .then(() => knex.schema.dropTable('foo'));
+        });
+
+        it(`works when there's only one record in the table`, function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => knex('foo').insert({ bar: 'foobar1' }))
+            .then(() => expect(
+                expect(knex('foo'), 'to satisfy', [
+                    { bar: 'foobar1' }
+                ]),
+                'to be fulfilled'
+            ))
+            .then(() => knex.schema.dropTable('foo'));
+        });
+
+        it(`works when there's no data in the table`, function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => expect(
+                expect(knex('foo'), 'to satisfy', []),
+                'to be fulfilled'
+            ))
+            .then(() => knex.schema.dropTable('foo'));
+        });
+
+        it(`rejects with the correct error if the data doesn't match`, function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => knex('foo').insert([
+                { bar: 'foobar1' },
+                { bar: 'foobar2' }
+            ]))
+            .then(() => expect(
+                expect(knex('foo'), 'to satisfy', [
+                    { bar: 'foobar1' },
+                    { bar: 'foobar20' }
+                ]),
+                'to be rejected with',
+                dontIndent`
+                expected 'select * from "foo"'
+                to satisfy [ { bar: 'foobar1' }, { bar: 'foobar20' } ]
+
+                [
+                  { bar: 'foobar1' },
+                  {
+                    bar: 'foobar2' // should equal 'foobar20'
+                                   //
+                                   // -foobar2
+                                   // +foobar20
+                  }
+                ]`
+            ))
+            .then(() => knex.schema.dropTable('foo'));
+        });
+
+        it('rejects with the correct error if the table is not empty but the array is', function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => knex('foo').insert([
+                { bar: 'foobar1' },
+                { bar: 'foobar2' }
+            ]))
+            .then(() => expect(
+                expect(knex('foo'), 'to satisfy', []),
+                'to be rejected with',
+                dontIndent`
+                expected 'select * from "foo"' to satisfy []
+
+                [
+                  { bar: 'foobar1' }, // should be removed
+                  { bar: 'foobar2' } // should be removed
+                ]`
+            ))
+            .then(() => knex.schema.dropTable('foo'));
+        });
+    });
+
     describe('<knex> to apply migration <string>', function () {
         it('applies a migration', function () {
             return expect(knex,
