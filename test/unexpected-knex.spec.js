@@ -727,8 +727,7 @@ describe('unexpected-knex', function () {
                   { bar: 'foobar1' }, // should be removed
                   { bar: 'foobar2' } // should be removed
                 ]`
-            ))
-            .then(() => knex.schema.dropTable('foo'));
+            ));
         });
     });
 
@@ -2004,6 +2003,87 @@ describe('unexpected-knex', function () {
                         'after hook'
                     ]));
                 });
+            });
+        });
+
+        describe('with multiple migration files', function () {
+            it('run all migrations before the provided filename', function () {
+                return expect(
+                    knex,
+                    'with the migrations directory containing', {
+                        '1-foo.js': {
+                            up: knex => knex.schema.createTable('foo', table => {
+                                table.timestamps();
+                            }),
+                            down: knex => knex.schema.dropTable('foo')
+                        },
+                        '2-foo.js': {
+                            up: knex => knex.schema.table('foo', table => {
+                                table.string('bar');
+                            }),
+                            down: knex => knex.schema.table('foo', table => {
+                                table.dropColumn('bar');
+                            })
+                        }
+                    },
+                    'to apply migration', '2-foo.js'
+                )
+                .then(() => expect(knex, 'to have column', { foo: 'bar' }));
+            });
+
+            it('run all migrations before the provided filename after sorting', function () {
+                return expect(
+                    knex,
+                    'with the migrations directory containing', {
+                        '2-foo.js': {
+                            up: knex => knex.schema.table('foo', table => {
+                                table.string('bar');
+                            }),
+                            down: knex => knex.schema.table('foo', table => {
+                                table.dropColumn('bar');
+                            })
+                        },
+                        '1-foo.js': {
+                            up: knex => knex.schema.createTable('foo', table => {
+                                table.timestamps();
+                            }),
+                            down: knex => knex.schema.dropTable('foo')
+                        }
+                    },
+                    'to apply migration', '2-foo.js'
+                )
+                .then(() => expect(knex, 'to have column', { foo: 'bar' }));
+            });
+
+            it('does not run migrations after the provided filename', function () {
+                return expect(
+                    knex,
+                    'with the migrations directory containing', {
+                        '1-foo.js': {
+                            up: knex => knex.schema.createTable('foo', table => {
+                                table.timestamps();
+                            }),
+                            down: knex => knex.schema.dropTable('foo')
+                        },
+                        '2-foo.js': {
+                            up: knex => knex.schema.table('foo', table => {
+                                table.string('bar');
+                            }),
+                            down: knex => knex.schema.table('foo', table => {
+                                table.dropColumn('bar');
+                            })
+                        },
+                        '3-foo.js': {
+                            up: knex => knex.schema.createTable('bar', table => {
+                                table.dropColumn('baz');
+                            }),
+                            down: knex => knex.schema.dropTable('bar')
+                        }
+                    },
+                    'to apply migration', '2-foo.js'
+                )
+                .then(() => expect(knex, 'to have column', { foo: 'bar' }))
+                .then(() => expect(knex, 'not to have table', 'bar'));
             });
         });
     });
