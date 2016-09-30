@@ -729,6 +729,60 @@ describe('unexpected-knex', function () {
                 ]`
             ));
         });
+
+        describe('with the "exhaustively" flag', function () {
+            it('rejects if the row contains more columns than the expected output', function () {
+                return knex.schema.createTable('foo', table => {
+                    table.string('bar');
+                    table.string('baz');
+                })
+                .then(() => knex('foo').insert([
+                    { bar: 'bar1', baz: 'baz1' },
+                    { bar: 'bar2', baz: 'baz2' }
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows exhaustively satisfying', [
+                        { bar: 'bar1' },
+                        { bar: 'bar2' }
+                    ]),
+                    'to be rejected with',
+                    dontIndent`
+                    expected 'select * from "foo"'
+                    to have rows exhaustively satisfying [ { bar: 'bar1' }, { bar: 'bar2' } ]
+
+                    [
+                      {
+                        bar: 'bar1',
+                        baz: 'baz1' // should be removed
+                      },
+                      {
+                        bar: 'bar2',
+                        baz: 'baz2' // should be removed
+                      }
+                    ]`
+                ));
+            });
+        });
+
+        describe('without the "exhaustively" flag', function () {
+            it(`doesn't reject if the row contains more columns than the expected output`, function () {
+                return knex.schema.createTable('foo', table => {
+                    table.string('bar');
+                    table.string('baz');
+                })
+                .then(() => knex('foo').insert([
+                    { bar: 'bar1', baz: 'baz1' },
+                    { bar: 'bar2', baz: 'baz2' }
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', [
+                        { bar: 'bar1' },
+                        { bar: 'bar2' }
+                    ]),
+                    'to be fulfilled'
+                ));
+            });
+        });
     });
 
     describe('<knexQuery> to have a row satisfying <object>', function () {
