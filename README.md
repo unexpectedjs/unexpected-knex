@@ -44,14 +44,14 @@ describe('migrations', function () {
             migrations: {
                 directory: './migrations'
             },
-            useNullAsDefault: true // recommended setting for sqlite databases
+            useNullAsDefault: true // recommended setting for sqlite3
         });
     }
 
     var knex = createKnex();
     afterEach(function () {
         // drop the in-memory database and recreate it after each test to keep
-        // your unit tests independent of each other
+        // the unit tests independent of each other
         return knex.destroy().then(function () {
             knex = createKnex();
         });
@@ -121,7 +121,7 @@ exports.test = function () {
     });
 
     this.testUp(function (knex, expect) {
-        // called after running the up migration, to test the up migration
+        // called after running the up migration
     });
 
     this.beforeDown(function (knex, expect) {
@@ -129,7 +129,7 @@ exports.test = function () {
     });
 
     this.testDown(function (knex, expect) {
-        // called after running the down migration, to test the down migration
+        // called after running the down migration
     });
 
     this.after(function (knex, expect) {
@@ -138,17 +138,16 @@ exports.test = function () {
 }
 ```
 
-All these hooks are optional. The plugin will actually actual order of calls is
-as follows:
+All these hooks are optional. The actual order of calls is as follows:
 
-1. beforeUp hook if provided
-2. up migration
-3. testUp hook if provided
-4. beforeDown hook if provided
-5. down migration
-6. testDown hook if provided
-7. up migration again
-8. after hook if provided
+1. `beforeUp` hook (if provided)
+2. `up` migration
+3. `testUp` hook (if provided)
+4. `beforeDown` hook (if provided)
+5. `down` migration
+6. `testDown` hook (if provided)
+7. `up` migration again
+8. `after` hook (if provided)
 
 The up migration is ran twice in order to check that your down migration works
 *and* that the up migration can still be applied after your down migration.
@@ -240,6 +239,13 @@ describe('002-merge-user-names.js', function () {
     });
 });
 ```
+> There is an implicit implication here: that `to apply migration` *also*
+applies all migrations before the provided migration (when the filenames are
+sorted). So in this example, even if there was a `003-create-foo.js` migration
+in the migrations directory, the batch of filenames that will be handed to the
+Knex migrator are `['001-create-user.js', '002-merge-user-names.js']`. This is
+because new migrations are usually dependent on older migrations (TODO: it would
+be nice to have a graph of which migrations are related).
 
 This is of course a minimal example, your migrations will typically be dealing
 with a lot more complex and sometimes unexpected user data which is a good reason
