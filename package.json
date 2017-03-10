@@ -21,20 +21,20 @@
   "author": "Joel Mukuthu <joelmukuthu@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
-    "knex": "0.12.0",
-    "unexpected": "10.20.0"
+    "knex": "0.12.7",
+    "unexpected": "10.26.3"
   },
   "devDependencies": {
-    "coveralls": "2.11.12",
+    "coveralls": "2.12.0",
     "dedent-js": "1.0.1",
-    "eslint": "2.13.1",
-    "eslint-config-onelint": "1.2.0",
-    "knex": "0.12.0",
-    "mocha": "3.0.2",
-    "nyc": "8.1.0",
-    "sqlite3": "3.1.4",
-    "unexpected": "10.20.0",
-    "unexpected-fs": "2.5.2",
+    "eslint": "3.17.1",
+    "eslint-config-onelint": "2.0.0",
+    "knex": "0.12.7",
+    "mocha": "3.2.0",
+    "nyc": "10.1.2",
+    "sqlite3": "3.1.8",
+    "unexpected": "10.26.3",
+    "unexpected-fs": "2.7.0",
     "unexpected-require": "2.0.0"
   },
   "nyc": {
