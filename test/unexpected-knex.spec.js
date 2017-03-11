@@ -842,8 +842,7 @@ describe('unexpected-knex', function () {
                 dontIndent`
                 expected 'select * from "foo"' to have a row satisfying { bar: 'foobar20' }
 
-                expected [ { bar: 'foobar1' }, { bar: 'foobar2' } ]
-                to have an item satisfying { bar: 'foobar20' }`
+                expected array to have an item satisfying { bar: 'foobar20' }`
             ));
         });
 
