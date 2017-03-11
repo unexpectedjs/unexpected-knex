@@ -840,9 +840,7 @@ describe('unexpected-knex', function () {
                 expect(knex('foo'), 'to have a row satisfying', { bar: 'foobar20' }),
                 'to be rejected with',
                 dontIndent`
-                expected 'select * from "foo"' to have a row satisfying { bar: 'foobar20' }
-
-                expected array to have an item satisfying { bar: 'foobar20' }`
+                expected 'select * from "foo"' to have a row satisfying { bar: 'foobar20' }`
             ));
         });
 
