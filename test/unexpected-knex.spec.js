@@ -581,7 +581,7 @@ describe('unexpected-knex', function () {
             ));
         });
 
-        it('rejects with the correct error if the data doesn\'t match', function () {
+        it("rejects with the correct error if the data doesn't match", function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
@@ -674,7 +674,7 @@ describe('unexpected-knex', function () {
             ));
         });
 
-        it('rejects with the correct error if the data doesn\'t match', function () {
+        it("rejects with the correct error if the data doesn't match", function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
@@ -765,7 +765,7 @@ describe('unexpected-knex', function () {
         });
 
         describe('without the "exhaustively" flag', function () {
-            it('doesn\'t reject if the row contains more columns than the expected output', function () {
+            it("doesn't reject if the row contains more columns than the expected output", function () {
                 return knex.schema.createTable('foo', table => {
                     table.string('bar');
                     table.string('baz');
@@ -828,7 +828,7 @@ describe('unexpected-knex', function () {
             ));
         });
 
-        it('rejects with the correct error if the data doesn\'t match', function () {
+        it("rejects with the correct error if the data doesn't match", function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
@@ -845,6 +845,47 @@ describe('unexpected-knex', function () {
                 expected [ { bar: 'foobar1' }, { bar: 'foobar2' } ]
                 to have an item satisfying { bar: 'foobar20' }`
             ));
+        });
+
+        describe('with the "exhaustively" flag', function () {
+            it('rejects if no row matches the expected output exactly', function () {
+                return knex.schema.createTable('foo', table => {
+                    table.string('bar');
+                    table.string('baz');
+                })
+                .then(() => knex('foo').insert([
+                    { bar: 'bar1', baz: 'baz1' },
+                    { bar: 'bar2', baz: 'baz2' }
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have a row exhaustively satisfying', {
+                        bar: 'bar1'
+                    }),
+                    'to be rejected with',
+                    dontIndent`
+                    expected 'select * from "foo"'
+                    to have a row exhaustively satisfying { bar: 'bar1' }`
+                ));
+            });
+        });
+
+        describe('without the "exhaustively" flag', function () {
+            it("doesn't reject if a row matches the expected output partially", function () {
+                return knex.schema.createTable('foo', table => {
+                    table.string('bar');
+                    table.string('baz');
+                })
+                .then(() => knex('foo').insert([
+                    { bar: 'bar1', baz: 'baz1' },
+                    { bar: 'bar2', baz: 'baz2' }
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have a row satisfying', {
+                        bar: 'bar1'
+                    }),
+                    'to be fulfilled'
+                ));
+            });
         });
     });
 
