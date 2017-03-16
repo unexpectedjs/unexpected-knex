@@ -538,6 +538,16 @@ describe('unexpected-knex', function () {
                 'to be', 'select * from "foo"'
             );
         });
+
+        it('bubbles up errors from the delegate assertion', function () {
+            return expect(
+                () => expect(knex, 'with table', 'foo', 'to equal', 'foo'),
+                'to error with',
+                dontIndent`
+                expected 'select * from "foo"' to equal 'foo'
+                `
+            );
+        });
     });
 
     describe('<knexQuery> to have rows satisfying <array>', function () {
