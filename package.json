@@ -5,9 +5,10 @@
   "main": "lib/unexpected-knex.js",
   "scripts": {
     "lint": "eslint .",
-    "test": "npm run lint && nyc mocha test/**/*.spec.js",
-    "coverage": "npm run test && nyc report --reporter=html && sensible-browser ./coverage/index.html",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "test": "mocha",
+    "coverage": "nyc mocha",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "ci": "npm-run-all lint coverage coveralls"
   },
   "keywords": [
     "test",
@@ -31,6 +32,7 @@
     "eslint-config-onelint": "2.0.0",
     "knex": "0.12.7",
     "mocha": "3.2.0",
+    "npm-run-all": "4.0.2",
     "nyc": "10.1.2",
     "sqlite3": "3.1.8",
     "unexpected": "10.26.3",
