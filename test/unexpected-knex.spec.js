@@ -633,6 +633,62 @@ describe('unexpected-knex', function () {
         });
     });
 
+    describe('<knexQuery> to be empty', function () {
+        it('runs the query and asserts that the returned array is empty', function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => expect(
+                expect(knex('foo'), 'to be empty'),
+                'to be fulfilled'
+            ));
+        });
+
+        it('rejects with the correct error if the table has rows', function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => knex('foo').insert([
+                { bar: 'foobar1' },
+                { bar: 'foobar2' }
+            ]))
+            .then(() => expect(
+                expect(knex('foo'), 'to be empty'),
+                'to be rejected with',
+                dontIndent`
+                expected 'select * from "foo"' to be empty`
+            ));
+        });
+
+        describe("with the 'not' flag", function () {
+            it('runs the query and asserts that the returned array is not empty', function () {
+                return knex.schema.createTable('foo', table => {
+                    table.string('bar');
+                })
+                .then(() => knex('foo').insert([
+                    { bar: 'foobar1' },
+                    { bar: 'foobar2' }
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'not to be empty'),
+                    'to be fulfilled'
+                ));
+            });
+
+            it('rejects with the correct error if the table is empty', function () {
+                return knex.schema.createTable('foo', table => {
+                    table.string('bar');
+                })
+                .then(() => expect(
+                    expect(knex('foo'), 'not to be empty'),
+                    'to be rejected with',
+                    dontIndent`
+                    expected 'select * from "foo"' not to be empty`
+                ));
+            });
+        });
+    });
+
     describe('<knexQuery> to have rows satisfying <expect.it>', function () {
         it('runs query.select() and asserts the data returned against the assertion', function () {
             return knex.schema.createTable('foo', table => {
