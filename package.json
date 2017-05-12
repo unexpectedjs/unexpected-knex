@@ -35,7 +35,7 @@
     "npm-run-all": "4.0.2",
     "nyc": "10.1.2",
     "sqlite3": "3.1.8",
-    "unexpected": "10.26.3",
+    "unexpected": "10.29.0",
     "unexpected-fs": "2.7.0",
     "unexpected-require": "2.0.0"
   },
