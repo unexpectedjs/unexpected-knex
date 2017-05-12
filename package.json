@@ -23,7 +23,7 @@
   "license": "MIT",
   "peerDependencies": {
     "knex": "0.12.7",
-    "unexpected": "10.26.3"
+    "unexpected": "10.27.0"
   },
   "devDependencies": {
     "coveralls": "2.12.0",
