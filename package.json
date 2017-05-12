@@ -22,8 +22,8 @@
   "author": "Joel Mukuthu <joelmukuthu@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
-    "knex": "0.12.7",
-    "unexpected": "10.27.0"
+    "knex": "^0.12.7",
+    "unexpected": "^10.27.0"
   },
   "devDependencies": {
     "coveralls": "2.12.0",
