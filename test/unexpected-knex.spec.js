@@ -849,59 +849,99 @@ describe('unexpected-knex', function () {
                 ]`
             ));
         });
+    });
 
-        describe('with the "exhaustively" flag', function () {
-            it('rejects if the row contains more columns than the expected output', function () {
-                return knex.schema.createTable('foo', table => {
-                    table.string('bar');
-                    table.string('baz');
-                })
-                .then(() => knex('foo').insert([
-                    { bar: 'bar1', baz: 'baz1' },
-                    { bar: 'bar2', baz: 'baz2' }
-                ]))
-                .then(() => expect(
-                    expect(knex('foo'), 'to have rows exhaustively satisfying', [
-                        { bar: 'bar1' },
-                        { bar: 'bar2' }
-                    ]),
-                    'to be rejected with',
-                    dontIndent`
-                    expected 'select * from "foo"'
-                    to have rows exhaustively satisfying [ { bar: 'bar1' }, { bar: 'bar2' } ]
-
-                    [
-                      {
-                        bar: 'bar1',
-                        baz: 'baz1' // should be removed
-                      },
-                      {
-                        bar: 'bar2',
-                        baz: 'baz2' // should be removed
-                      }
-                    ]`
-                ));
-            });
+    describe('<knexQuery> to have rows satisfying <function>', function () {
+        it('runs query.select() and asserts the data returned against the function', function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => knex('foo').insert([
+                { bar: 'foobar1' },
+                { bar: 'foobar2' }
+            ]))
+            .then(() => expect(
+                expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [
+                    { bar: 'foobar1' },
+                    { bar: 'foobar2' }
+                ])),
+                'to be fulfilled'
+            ));
         });
 
-        describe('without the "exhaustively" flag', function () {
-            it("doesn't reject if the row contains more columns than the expected output", function () {
-                return knex.schema.createTable('foo', table => {
-                    table.string('bar');
-                    table.string('baz');
-                })
-                .then(() => knex('foo').insert([
-                    { bar: 'bar1', baz: 'baz1' },
-                    { bar: 'bar2', baz: 'baz2' }
-                ]))
-                .then(() => expect(
-                    expect(knex('foo'), 'to have rows satisfying', [
-                        { bar: 'bar1' },
-                        { bar: 'bar2' }
-                    ]),
-                    'to be fulfilled'
-                ));
-            });
+        it("works when there's only one record in the table", function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => knex('foo').insert({ bar: 'foobar1' }))
+            .then(() => expect(
+                expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [
+                    { bar: 'foobar1' }
+                ])),
+                'to be fulfilled'
+            ));
+        });
+
+        it("works when there's no data in the table", function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => expect(
+                expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [])),
+                'to be fulfilled'
+            ));
+        });
+
+        it("rejects with the correct error if the data doesn't match", function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => knex('foo').insert([
+                { bar: 'foobar1' },
+                { bar: 'foobar2' }
+            ]))
+            .then(() => expect(
+                expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [
+                    { bar: 'foobar1' },
+                    { bar: 'foobar20' }
+                ])),
+                'to be rejected with',
+                dontIndent`
+                expected 'select * from "foo"'
+                to have rows satisfying function ( /*...*/ ) { /*...*/ }
+
+                [
+                  { bar: 'foobar1' },
+                  {
+                    bar: 'foobar2' // should equal 'foobar20'
+                                   //
+                                   // -foobar2
+                                   // +foobar20
+                  }
+                ]`
+            ));
+        });
+
+        it('rejects with the correct error if the table is not empty but the array is', function () {
+            return knex.schema.createTable('foo', table => {
+                table.string('bar');
+            })
+            .then(() => knex('foo').insert([
+                { bar: 'foobar1' },
+                { bar: 'foobar2' }
+            ]))
+            .then(() => expect(
+                expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [])),
+                'to be rejected with',
+                dontIndent`
+                expected 'select * from "foo"'
+                to have rows satisfying function ( /*...*/ ) { /*...*/ }
+
+                [
+                  { bar: 'foobar1' }, // should be removed
+                  { bar: 'foobar2' } // should be removed
+                ]`
+            ));
         });
     });
 
