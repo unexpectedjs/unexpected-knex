@@ -22,7 +22,7 @@
   "author": "Joel Mukuthu <joelmukuthu@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
-    "knex": "^0.12.7",
+    "knex": "^0.13.0",
     "unexpected": "^10.27.0"
   },
   "devDependencies": {
@@ -30,7 +30,7 @@
     "dedent-js": "1.0.1",
     "eslint": "3.17.1",
     "eslint-config-onelint": "2.0.0",
-    "knex": "0.12.7",
+    "knex": "0.13.0",
     "mocha": "3.2.0",
     "npm-run-all": "4.0.2",
     "nyc": "10.1.2",
