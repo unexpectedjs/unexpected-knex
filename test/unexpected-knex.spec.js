@@ -95,10 +95,10 @@ describe('unexpected-knex', function () {
             return knex.schema.createTable('foo', table => {
                 table.timestamps();
             })
-            .then(() => expect(
-                expect(knex, 'to have table', 'foo'),
-                'to be fulfilled'
-            ));
+                .then(() => expect(
+                    expect(knex, 'to have table', 'foo'),
+                    'to be fulfilled'
+                ));
         });
 
         it('rejects if the table does not exist', function () {
@@ -125,14 +125,14 @@ describe('unexpected-knex', function () {
             return knex.schema.createTable('foo', table => {
                 table.timestamps();
             })
-            .then(() => expect(
-                expect(knex, 'not to have table', 'foo'),
-                'to be rejected with',
-                dontIndent`
+                .then(() => expect(
+                    expect(knex, 'not to have table', 'foo'),
+                    'to be rejected with',
+                    dontIndent`
                 expected
                 ${knexOutputBlock}
                 not to have table 'foo'`
-            ));
+                ));
         });
     });
 
@@ -141,24 +141,24 @@ describe('unexpected-knex', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => expect(
-                expect(knex, 'to have column', { foo: 'bar' }),
-                'to be fulfilled'
-            ));
+                .then(() => expect(
+                    expect(knex, 'to have column', { foo: 'bar' }),
+                    'to be fulfilled'
+                ));
         });
 
         it('rejects if the column does not exist', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => expect(
-                expect(knex, 'to have column', { foo: 'baz' }),
-                'to be rejected with',
-                dontIndent`
+                .then(() => expect(
+                    expect(knex, 'to have column', { foo: 'baz' }),
+                    'to be rejected with',
+                    dontIndent`
                 expected
                 ${knexOutputBlock}
                 to have column { foo: 'baz' }`
-            ));
+                ));
         });
 
         it('rejects if the table itself does not exist', function () {
@@ -190,24 +190,24 @@ describe('unexpected-knex', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => expect(
-                expect(knex, 'not to have column', { foo: 'baz' }),
-                'to be fulfilled'
-            ));
+                .then(() => expect(
+                    expect(knex, 'not to have column', { foo: 'baz' }),
+                    'to be fulfilled'
+                ));
         });
 
         it('rejects if the column exists', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => expect(
-                expect(knex, 'not to have column', { foo: 'bar' }),
-                'to be rejected with',
-                dontIndent`
+                .then(() => expect(
+                    expect(knex, 'not to have column', { foo: 'bar' }),
+                    'to be rejected with',
+                    dontIndent`
                 expected
                 ${knexOutputBlock}
                 not to have column { foo: 'bar' }`
-            ));
+                ));
         });
 
         it('fulfils if the table itself does not exist', function () {
@@ -235,24 +235,24 @@ describe('unexpected-knex', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => expect(
-                expect(knex, 'not to have column', { foo: 'baz' }),
-                'to be fulfilled'
-            ));
+                .then(() => expect(
+                    expect(knex, 'not to have column', { foo: 'baz' }),
+                    'to be fulfilled'
+                ));
         });
 
         it('rejects if the column exists', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => expect(
-                expect(knex, 'not to have column', { foo: 'bar' }),
-                'to be rejected with',
-                dontIndent`
+                .then(() => expect(
+                    expect(knex, 'not to have column', { foo: 'bar' }),
+                    'to be rejected with',
+                    dontIndent`
                 expected
                 ${knexOutputBlock}
                 not to have column { foo: 'bar' }`
-            ));
+                ));
         });
 
         it('fulfils if the table itself does not exist', function () {
@@ -281,40 +281,40 @@ describe('unexpected-knex', function () {
                 table.string('bar');
                 table.string('baz');
             })
-            .then(() => expect(
-                expect(knex, 'to have columns', { foo: [ 'bar', 'baz' ] }),
-                'to be fulfilled'
-            ));
+                .then(() => expect(
+                    expect(knex, 'to have columns', { foo: [ 'bar', 'baz' ] }),
+                    'to be fulfilled'
+                ));
         });
 
         it('rejects if any of the columns does not exist', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => expect(
-                expect(knex, 'to have columns', { foo: [ 'bar', 'baz' ] }),
-                'to be rejected with',
-                dontIndent`
+                .then(() => expect(
+                    expect(knex, 'to have columns', { foo: [ 'bar', 'baz' ] }),
+                    'to be rejected with',
+                    dontIndent`
                 expected
                 ${knexOutputBlock}
                 to have columns { foo: [ 'bar', 'baz' ] }
                   expected knex to have column { foo: 'baz' }`
-            ));
+                ));
         });
 
         it('rejects if all columns do not exist', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => expect(
-                expect(knex, 'to have columns', { foo: [ 'baz', 'quux' ] }),
-                'to be rejected with',
-                dontIndent`
+                .then(() => expect(
+                    expect(knex, 'to have columns', { foo: [ 'baz', 'quux' ] }),
+                    'to be rejected with',
+                    dontIndent`
                 expected
                 ${knexOutputBlock}
                 to have columns { foo: [ 'baz', 'quux' ] }
                   expected knex to have column { foo: 'baz' }`
-            ));
+                ));
         });
 
         it('rejects if the table itself does not exist', function () {
@@ -334,64 +334,64 @@ describe('unexpected-knex', function () {
                 table.string('bar');
                 table.string('baz');
             })
-            .then(() => knex.schema.createTable('bar', table => {
-                table.string('baz');
-            }))
-            .then(() => expect(
-                expect(knex, 'to have columns', { foo: [ 'bar', 'baz' ], bar: 'baz' }),
-                'to be fulfilled'
-            ));
+                .then(() => knex.schema.createTable('bar', table => {
+                    table.string('baz');
+                }))
+                .then(() => expect(
+                    expect(knex, 'to have columns', { foo: [ 'bar', 'baz' ], bar: 'baz' }),
+                    'to be fulfilled'
+                ));
         });
 
         it('rejects if any of the columns in any of the tables does not exist', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex.schema.createTable('bar', table => {
-                table.string('baz');
-            }))
-            .then(() => expect(
-                expect(knex, 'to have columns', { foo: [ 'bar', 'baz' ], bar: 'baz' }),
-                'to be rejected with',
-                dontIndent`
+                .then(() => knex.schema.createTable('bar', table => {
+                    table.string('baz');
+                }))
+                .then(() => expect(
+                    expect(knex, 'to have columns', { foo: [ 'bar', 'baz' ], bar: 'baz' }),
+                    'to be rejected with',
+                    dontIndent`
                 expected
                 ${knexOutputBlock}
                 to have columns { foo: [ 'bar', 'baz' ], bar: 'baz' }
                   expected knex to have column { foo: 'baz' }`
-            ));
+                ));
         });
 
         it('rejects if all columns in all of the tables do not exist', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex.schema.createTable('bar', table => {
-                table.string('baz');
-            }))
-            .then(() => expect(
-                expect(knex, 'to have columns', { foo: 'quux', bar: 'quux' }),
-                'to be rejected with',
-                dontIndent`
+                .then(() => knex.schema.createTable('bar', table => {
+                    table.string('baz');
+                }))
+                .then(() => expect(
+                    expect(knex, 'to have columns', { foo: 'quux', bar: 'quux' }),
+                    'to be rejected with',
+                    dontIndent`
                 expected
                 ${knexOutputBlock}
                 to have columns { foo: 'quux', bar: 'quux' }
                   expected knex to have column { foo: 'quux' }`
-            ));
+                ));
         });
 
         it('rejects if one of the tables do not exist', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => expect(
-                expect(knex, 'to have columns', { foo: 'bar', bar: 'quux' }),
-                'to be rejected with',
-                dontIndent`
+                .then(() => expect(
+                    expect(knex, 'to have columns', { foo: 'bar', bar: 'quux' }),
+                    'to be rejected with',
+                    dontIndent`
                 expected
                 ${knexOutputBlock}
                 to have columns { foo: 'bar', bar: 'quux' }
                   expected knex to have column { bar: 'quux' }`
-            ));
+                ));
         });
 
         it('rejects if the tables themselves do not exist', function () {
@@ -413,25 +413,25 @@ describe('unexpected-knex', function () {
                 table.string('bar');
                 table.string('baz');
             })
-            .then(() => expect(
-                expect(knex, 'not to have columns', { foo: [ 'quux1', 'quux2' ] }),
-                'to be fulfilled'
-            ));
+                .then(() => expect(
+                    expect(knex, 'not to have columns', { foo: [ 'quux1', 'quux2' ] }),
+                    'to be fulfilled'
+                ));
         });
 
         it('rejects if any of the columns exists', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => expect(
-                expect(knex, 'not to have columns', { foo: [ 'bar', 'baz' ] }),
-                'to be rejected with',
-                dontIndent`
+                .then(() => expect(
+                    expect(knex, 'not to have columns', { foo: [ 'bar', 'baz' ] }),
+                    'to be rejected with',
+                    dontIndent`
                 expected
                 ${knexOutputBlock}
                 not to have columns { foo: [ 'bar', 'baz' ] }
                   expected knex not to have column { foo: 'bar' }`
-            ));
+                ));
         });
 
         it('rejects if all columns exist', function () {
@@ -439,15 +439,15 @@ describe('unexpected-knex', function () {
                 table.string('bar');
                 table.string('baz');
             })
-            .then(() => expect(
-                expect(knex, 'not to have columns', { foo: [ 'bar', 'baz' ] }),
-                'to be rejected with',
-                dontIndent`
+                .then(() => expect(
+                    expect(knex, 'not to have columns', { foo: [ 'bar', 'baz' ] }),
+                    'to be rejected with',
+                    dontIndent`
                 expected
                 ${knexOutputBlock}
                 not to have columns { foo: [ 'bar', 'baz' ] }
                   expected knex not to have column { foo: 'bar' }`
-            ));
+                ));
         });
 
         it('fulfils if the table itself does not exist', function () {
@@ -461,49 +461,49 @@ describe('unexpected-knex', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex.schema.createTable('bar', table => {
-                table.string('baz');
-            }))
-            .then(() => expect(
-                expect(knex, 'not to have columns', { foo: [ 'quux1', 'quux2' ], bar: 'quux1' }),
-                'to be fulfilled'
-            ));
+                .then(() => knex.schema.createTable('bar', table => {
+                    table.string('baz');
+                }))
+                .then(() => expect(
+                    expect(knex, 'not to have columns', { foo: [ 'quux1', 'quux2' ], bar: 'quux1' }),
+                    'to be fulfilled'
+                ));
         });
 
         it('rejects if any of the columns in any of the tables exists', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex.schema.createTable('bar', table => {
-                table.string('baz');
-            }))
-            .then(() => expect(
-                expect(knex, 'not to have columns', { foo: [ 'baz', 'bar' ], bar: 'quux' }),
-                'to be rejected with',
-                dontIndent`
+                .then(() => knex.schema.createTable('bar', table => {
+                    table.string('baz');
+                }))
+                .then(() => expect(
+                    expect(knex, 'not to have columns', { foo: [ 'baz', 'bar' ], bar: 'quux' }),
+                    'to be rejected with',
+                    dontIndent`
                 expected
                 ${knexOutputBlock}
                 not to have columns { foo: [ 'baz', 'bar' ], bar: 'quux' }
                   expected knex not to have column { foo: 'bar' }`
-            ));
+                ));
         });
 
         it('rejects if all columns in all of the tables exists', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex.schema.createTable('bar', table => {
-                table.string('baz');
-            }))
-            .then(() => expect(
-                expect(knex, 'not to have columns', { foo: 'bar', bar: 'baz' }),
-                'to be rejected with',
-                dontIndent`
+                .then(() => knex.schema.createTable('bar', table => {
+                    table.string('baz');
+                }))
+                .then(() => expect(
+                    expect(knex, 'not to have columns', { foo: 'bar', bar: 'baz' }),
+                    'to be rejected with',
+                    dontIndent`
                 expected
                 ${knexOutputBlock}
                 not to have columns { foo: 'bar', bar: 'baz' }
                   expected knex not to have column { foo: 'bar' }`
-            ));
+                ));
         });
 
         it('fulfils if the tables themselves do not exist', function () {
@@ -555,57 +555,57 @@ describe('unexpected-knex', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert([
-                { bar: 'foobar1' },
-                { bar: 'foobar2' }
-            ]))
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', [
+                .then(() => knex('foo').insert([
                     { bar: 'foobar1' },
                     { bar: 'foobar2' }
-                ]),
-                'to be fulfilled'
-            ));
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', [
+                        { bar: 'foobar1' },
+                        { bar: 'foobar2' }
+                    ]),
+                    'to be fulfilled'
+                ));
         });
 
         it("works when there's only one record in the table", function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert({ bar: 'foobar1' }))
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', [
-                    { bar: 'foobar1' }
-                ]),
-                'to be fulfilled'
-            ));
+                .then(() => knex('foo').insert({ bar: 'foobar1' }))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', [
+                        { bar: 'foobar1' }
+                    ]),
+                    'to be fulfilled'
+                ));
         });
 
         it("works when there's no data in the table", function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', []),
-                'to be fulfilled'
-            ));
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', []),
+                    'to be fulfilled'
+                ));
         });
 
         it("rejects with the correct error if the data doesn't match", function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert([
-                { bar: 'foobar1' },
-                { bar: 'foobar2' }
-            ]))
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', [
+                .then(() => knex('foo').insert([
                     { bar: 'foobar1' },
-                    { bar: 'foobar20' }
-                ]),
-                'to be rejected with',
-                dontIndent`
+                    { bar: 'foobar2' }
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', [
+                        { bar: 'foobar1' },
+                        { bar: 'foobar20' }
+                    ]),
+                    'to be rejected with',
+                    dontIndent`
                 expected 'select * from "foo"'
                 to have rows satisfying [ { bar: 'foobar1' }, { bar: 'foobar20' } ]
 
@@ -618,28 +618,28 @@ describe('unexpected-knex', function () {
                                    // +foobar20
                   }
                 ]`
-            ));
+                ));
         });
 
         it('rejects with the correct error if the table is not empty but the array is', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert([
-                { bar: 'foobar1' },
-                { bar: 'foobar2' }
-            ]))
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', []),
-                'to be rejected with',
-                dontIndent`
+                .then(() => knex('foo').insert([
+                    { bar: 'foobar1' },
+                    { bar: 'foobar2' }
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', []),
+                    'to be rejected with',
+                    dontIndent`
                 expected 'select * from "foo"' to have rows satisfying []
 
                 [
                   { bar: 'foobar1' }, // should be removed
                   { bar: 'foobar2' } // should be removed
                 ]`
-            ));
+                ));
         });
 
         describe('with the "exhaustively" flag', function () {
@@ -648,17 +648,17 @@ describe('unexpected-knex', function () {
                     table.string('bar');
                     table.string('baz');
                 })
-                .then(() => knex('foo').insert([
-                    { bar: 'bar1', baz: 'baz1' },
-                    { bar: 'bar2', baz: 'baz2' }
-                ]))
-                .then(() => expect(
-                    expect(knex('foo'), 'to have rows exhaustively satisfying', [
-                        { bar: 'bar1' },
-                        { bar: 'bar2' }
-                    ]),
-                    'to be rejected with',
-                    dontIndent`
+                    .then(() => knex('foo').insert([
+                        { bar: 'bar1', baz: 'baz1' },
+                        { bar: 'bar2', baz: 'baz2' }
+                    ]))
+                    .then(() => expect(
+                        expect(knex('foo'), 'to have rows exhaustively satisfying', [
+                            { bar: 'bar1' },
+                            { bar: 'bar2' }
+                        ]),
+                        'to be rejected with',
+                        dontIndent`
                     expected 'select * from "foo"'
                     to have rows exhaustively satisfying [ { bar: 'bar1' }, { bar: 'bar2' } ]
 
@@ -672,7 +672,7 @@ describe('unexpected-knex', function () {
                         baz: 'baz2' // should be removed
                       }
                     ]`
-                ));
+                    ));
             });
         });
 
@@ -682,17 +682,17 @@ describe('unexpected-knex', function () {
                     table.string('bar');
                     table.string('baz');
                 })
-                .then(() => knex('foo').insert([
-                    { bar: 'bar1', baz: 'baz1' },
-                    { bar: 'bar2', baz: 'baz2' }
-                ]))
-                .then(() => expect(
-                    expect(knex('foo'), 'to have rows satisfying', [
-                        { bar: 'bar1' },
-                        { bar: 'bar2' }
-                    ]),
-                    'to be fulfilled'
-                ));
+                    .then(() => knex('foo').insert([
+                        { bar: 'bar1', baz: 'baz1' },
+                        { bar: 'bar2', baz: 'baz2' }
+                    ]))
+                    .then(() => expect(
+                        expect(knex('foo'), 'to have rows satisfying', [
+                            { bar: 'bar1' },
+                            { bar: 'bar2' }
+                        ]),
+                        'to be fulfilled'
+                    ));
             });
         });
     });
@@ -702,26 +702,26 @@ describe('unexpected-knex', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => expect(
-                expect(knex('foo'), 'to be empty'),
-                'to be fulfilled'
-            ));
+                .then(() => expect(
+                    expect(knex('foo'), 'to be empty'),
+                    'to be fulfilled'
+                ));
         });
 
         it('rejects with the correct error if the table has rows', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert([
-                { bar: 'foobar1' },
-                { bar: 'foobar2' }
-            ]))
-            .then(() => expect(
-                expect(knex('foo'), 'to be empty'),
-                'to be rejected with',
-                dontIndent`
+                .then(() => knex('foo').insert([
+                    { bar: 'foobar1' },
+                    { bar: 'foobar2' }
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to be empty'),
+                    'to be rejected with',
+                    dontIndent`
                 expected 'select * from "foo"' to be empty`
-            ));
+                ));
         });
 
         describe("with the 'not' flag", function () {
@@ -729,26 +729,26 @@ describe('unexpected-knex', function () {
                 return knex.schema.createTable('foo', table => {
                     table.string('bar');
                 })
-                .then(() => knex('foo').insert([
-                    { bar: 'foobar1' },
-                    { bar: 'foobar2' }
-                ]))
-                .then(() => expect(
-                    expect(knex('foo'), 'not to be empty'),
-                    'to be fulfilled'
-                ));
+                    .then(() => knex('foo').insert([
+                        { bar: 'foobar1' },
+                        { bar: 'foobar2' }
+                    ]))
+                    .then(() => expect(
+                        expect(knex('foo'), 'not to be empty'),
+                        'to be fulfilled'
+                    ));
             });
 
             it('rejects with the correct error if the table is empty', function () {
                 return knex.schema.createTable('foo', table => {
                     table.string('bar');
                 })
-                .then(() => expect(
-                    expect(knex('foo'), 'not to be empty'),
-                    'to be rejected with',
-                    dontIndent`
+                    .then(() => expect(
+                        expect(knex('foo'), 'not to be empty'),
+                        'to be rejected with',
+                        dontIndent`
                     expected 'select * from "foo"' not to be empty`
-                ));
+                    ));
             });
         });
     });
@@ -758,57 +758,57 @@ describe('unexpected-knex', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert([
-                { bar: 'foobar1' },
-                { bar: 'foobar2' }
-            ]))
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [
+                .then(() => knex('foo').insert([
                     { bar: 'foobar1' },
                     { bar: 'foobar2' }
-                ])),
-                'to be fulfilled'
-            ));
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [
+                        { bar: 'foobar1' },
+                        { bar: 'foobar2' }
+                    ])),
+                    'to be fulfilled'
+                ));
         });
 
         it("works when there's only one record in the table", function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert({ bar: 'foobar1' }))
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [
-                    { bar: 'foobar1' }
-                ])),
-                'to be fulfilled'
-            ));
+                .then(() => knex('foo').insert({ bar: 'foobar1' }))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [
+                        { bar: 'foobar1' }
+                    ])),
+                    'to be fulfilled'
+                ));
         });
 
         it("works when there's no data in the table", function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [])),
-                'to be fulfilled'
-            ));
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [])),
+                    'to be fulfilled'
+                ));
         });
 
         it("rejects with the correct error if the data doesn't match", function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert([
-                { bar: 'foobar1' },
-                { bar: 'foobar2' }
-            ]))
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [
+                .then(() => knex('foo').insert([
                     { bar: 'foobar1' },
-                    { bar: 'foobar20' }
-                ])),
-                'to be rejected with',
-                dontIndent`
+                    { bar: 'foobar2' }
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [
+                        { bar: 'foobar1' },
+                        { bar: 'foobar20' }
+                    ])),
+                    'to be rejected with',
+                    dontIndent`
                 expected 'select * from "foo"'
                 to have rows satisfying expect.it('to equal', [ { bar: 'foobar1' }, { bar: 'foobar20' } ])
 
@@ -824,21 +824,21 @@ describe('unexpected-knex', function () {
                                    // +foobar20
                   }
                 ]`
-            ));
+                ));
         });
 
         it('rejects with the correct error if the table is not empty but the array is', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert([
-                { bar: 'foobar1' },
-                { bar: 'foobar2' }
-            ]))
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [])),
-                'to be rejected with',
-                dontIndent`
+                .then(() => knex('foo').insert([
+                    { bar: 'foobar1' },
+                    { bar: 'foobar2' }
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', expect.it('to equal', [])),
+                    'to be rejected with',
+                    dontIndent`
                 expected 'select * from "foo"' to have rows satisfying expect.it('to equal', [])
 
                 expected [ { bar: 'foobar1' }, { bar: 'foobar2' } ] to equal []
@@ -847,7 +847,7 @@ describe('unexpected-knex', function () {
                   { bar: 'foobar1' }, // should be removed
                   { bar: 'foobar2' } // should be removed
                 ]`
-            ));
+                ));
         });
     });
 
@@ -856,57 +856,57 @@ describe('unexpected-knex', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert([
-                { bar: 'foobar1' },
-                { bar: 'foobar2' }
-            ]))
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [
+                .then(() => knex('foo').insert([
                     { bar: 'foobar1' },
                     { bar: 'foobar2' }
-                ])),
-                'to be fulfilled'
-            ));
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [
+                        { bar: 'foobar1' },
+                        { bar: 'foobar2' }
+                    ])),
+                    'to be fulfilled'
+                ));
         });
 
         it("works when there's only one record in the table", function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert({ bar: 'foobar1' }))
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [
-                    { bar: 'foobar1' }
-                ])),
-                'to be fulfilled'
-            ));
+                .then(() => knex('foo').insert({ bar: 'foobar1' }))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [
+                        { bar: 'foobar1' }
+                    ])),
+                    'to be fulfilled'
+                ));
         });
 
         it("works when there's no data in the table", function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [])),
-                'to be fulfilled'
-            ));
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [])),
+                    'to be fulfilled'
+                ));
         });
 
         it("rejects with the correct error if the data doesn't match", function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert([
-                { bar: 'foobar1' },
-                { bar: 'foobar2' }
-            ]))
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [
+                .then(() => knex('foo').insert([
                     { bar: 'foobar1' },
-                    { bar: 'foobar20' }
-                ])),
-                'to be rejected with',
-                dontIndent`
+                    { bar: 'foobar2' }
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [
+                        { bar: 'foobar1' },
+                        { bar: 'foobar20' }
+                    ])),
+                    'to be rejected with',
+                    dontIndent`
                 expected 'select * from "foo"'
                 to have rows satisfying function ( /*...*/ ) { /*...*/ }
 
@@ -919,21 +919,21 @@ describe('unexpected-knex', function () {
                                    // +foobar20
                   }
                 ]`
-            ));
+                ));
         });
 
         it('rejects with the correct error if the table is not empty but the array is', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert([
-                { bar: 'foobar1' },
-                { bar: 'foobar2' }
-            ]))
-            .then(() => expect(
-                expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [])),
-                'to be rejected with',
-                dontIndent`
+                .then(() => knex('foo').insert([
+                    { bar: 'foobar1' },
+                    { bar: 'foobar2' }
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have rows satisfying', rows => expect(rows, 'to equal', [])),
+                    'to be rejected with',
+                    dontIndent`
                 expected 'select * from "foo"'
                 to have rows satisfying function ( /*...*/ ) { /*...*/ }
 
@@ -941,7 +941,7 @@ describe('unexpected-knex', function () {
                   { bar: 'foobar1' }, // should be removed
                   { bar: 'foobar2' } // should be removed
                 ]`
-            ));
+                ));
         });
     });
 
@@ -950,61 +950,61 @@ describe('unexpected-knex', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert({ bar: 'foobar1' }))
-            .then(() => expect(
-                expect(knex('foo'), 'to have a row satisfying', { bar: 'foobar1' }),
-                'to be fulfilled'
-            ));
+                .then(() => knex('foo').insert({ bar: 'foobar1' }))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have a row satisfying', { bar: 'foobar1' }),
+                    'to be fulfilled'
+                ));
         });
 
         it('asserts that at least one record in the table satisfies the object', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert([
-                { bar: 'foobar1' },
-                { bar: 'foobar2' }
-            ]))
-            .then(() => expect(
-                expect(knex('foo'), 'to have a row satisfying', { bar: 'foobar2' }),
-                'to be fulfilled'
-            ));
+                .then(() => knex('foo').insert([
+                    { bar: 'foobar1' },
+                    { bar: 'foobar2' }
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have a row satisfying', { bar: 'foobar2' }),
+                    'to be fulfilled'
+                ));
         });
 
         it('does not assert against an empty object', function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert([
-                { bar: 'foobar1' },
-                { bar: 'foobar2' }
-            ]))
-            .then(() => expect(
-                () => expect(knex('foo'), 'to have a row satisfying', {}),
-                'to be rejected with',
-                dontIndent`
+                .then(() => knex('foo').insert([
+                    { bar: 'foobar1' },
+                    { bar: 'foobar2' }
+                ]))
+                .then(() => expect(
+                    () => expect(knex('foo'), 'to have a row satisfying', {}),
+                    'to be rejected with',
+                    dontIndent`
                 expected 'select * from "foo"' to have a row satisfying {}
                   cannot assert that a row has no columns or fields`
-            ));
+                ));
         });
 
         it("rejects with the correct error if the data doesn't match", function () {
             return knex.schema.createTable('foo', table => {
                 table.string('bar');
             })
-            .then(() => knex('foo').insert([
-                { bar: 'foobar1' },
-                { bar: 'foobar2' }
-            ]))
-            .then(() => expect(
-                expect(knex('foo'), 'to have a row satisfying', { bar: 'foobar20' }),
-                'to be rejected with',
-                dontIndent`
+                .then(() => knex('foo').insert([
+                    { bar: 'foobar1' },
+                    { bar: 'foobar2' }
+                ]))
+                .then(() => expect(
+                    expect(knex('foo'), 'to have a row satisfying', { bar: 'foobar20' }),
+                    'to be rejected with',
+                    dontIndent`
                 expected 'select * from "foo"' to have a row satisfying { bar: 'foobar20' }
 
                 expected array to have an item satisfying { bar: 'foobar20' }
                 `
-            ));
+                ));
         });
 
         describe('with the "exhaustively" flag', function () {
@@ -1013,21 +1013,21 @@ describe('unexpected-knex', function () {
                     table.string('bar');
                     table.string('baz');
                 })
-                .then(() => knex('foo').insert([
-                    { bar: 'bar1', baz: 'baz1' },
-                    { bar: 'bar2', baz: 'baz2' }
-                ]))
-                .then(() => expect(
-                    expect(knex('foo'), 'to have a row exhaustively satisfying', {
-                        bar: 'bar1'
-                    }),
-                    'to be rejected with',
-                    dontIndent`
+                    .then(() => knex('foo').insert([
+                        { bar: 'bar1', baz: 'baz1' },
+                        { bar: 'bar2', baz: 'baz2' }
+                    ]))
+                    .then(() => expect(
+                        expect(knex('foo'), 'to have a row exhaustively satisfying', {
+                            bar: 'bar1'
+                        }),
+                        'to be rejected with',
+                        dontIndent`
                     expected 'select * from "foo"'
                     to have a row exhaustively satisfying { bar: 'bar1' }
 
                     expected array to have an item exhaustively satisfying { bar: 'bar1' }`
-                ));
+                    ));
             });
         });
 
@@ -1037,16 +1037,16 @@ describe('unexpected-knex', function () {
                     table.string('bar');
                     table.string('baz');
                 })
-                .then(() => knex('foo').insert([
-                    { bar: 'bar1', baz: 'baz1' },
-                    { bar: 'bar2', baz: 'baz2' }
-                ]))
-                .then(() => expect(
-                    expect(knex('foo'), 'to have a row satisfying', {
-                        bar: 'bar1'
-                    }),
-                    'to be fulfilled'
-                ));
+                    .then(() => knex('foo').insert([
+                        { bar: 'bar1', baz: 'baz1' },
+                        { bar: 'bar2', baz: 'baz2' }
+                    ]))
+                    .then(() => expect(
+                        expect(knex('foo'), 'to have a row satisfying', {
+                            bar: 'bar1'
+                        }),
+                        'to be fulfilled'
+                    ));
             });
         });
     });
@@ -1065,7 +1065,7 @@ describe('unexpected-knex', function () {
                 },
                 'to apply migration', '1-foo.js'
             )
-            .then(() => expect(knex, 'to have table', 'foo'));
+                .then(() => expect(knex, 'to have table', 'foo'));
         });
 
         it('migrates up, down, then up again to ensure the down migration is tested', function () {
@@ -1086,11 +1086,11 @@ describe('unexpected-knex', function () {
                 },
                 'to apply migration', '1-foo.js'
             )
-            .then(() => expect(callOrder, 'to equal', [
-                'up migration',
-                'down migration',
-                'up migration'
-            ]));
+                .then(() => expect(callOrder, 'to equal', [
+                    'up migration',
+                    'down migration',
+                    'up migration'
+                ]));
         });
 
         describe('throws a useful error', function () {
@@ -1112,8 +1112,8 @@ describe('unexpected-knex', function () {
                         'with no migrations directory',
                         'to apply migration', '1-foo.js'
                     ),
-                    'to error with',
-                    dontIndent`
+                'to error with',
+                dontIndent`
                     expected
                     ${knexOutputBlock}
                     to apply migration '1-foo.js'
@@ -1131,8 +1131,8 @@ describe('unexpected-knex', function () {
                         'with an empty migrations directory',
                         'to apply migration', '1-foo.js'
                     ),
-                    'to error with',
-                    dontIndent`
+                'to error with',
+                dontIndent`
                     expected
                     ${knexOutputBlock}
                     to apply migration '1-foo.js'
@@ -1157,8 +1157,8 @@ describe('unexpected-knex', function () {
                         },
                         'to apply migration', '1-foo.js'
                     ),
-                    'to error with',
-                    dontIndent`
+                'to error with',
+                dontIndent`
                     expected
                     ${knexOutputBlock}
                     to apply migration '1-foo.js'
@@ -1286,12 +1286,12 @@ describe('unexpected-knex', function () {
                         },
                         'to apply migration', 'foo.js'
                     )
-                    .then(() => expect(callOrder, 'to equal', [
-                        'beforeUp hook',
-                        'up migration',
-                        'down migration',
-                        'up migration'
-                    ]));
+                        .then(() => expect(callOrder, 'to equal', [
+                            'beforeUp hook',
+                            'up migration',
+                            'down migration',
+                            'up migration'
+                        ]));
                 });
 
                 it('formats the error correctly if the hook throws a sync error', function () {
@@ -1393,12 +1393,12 @@ describe('unexpected-knex', function () {
                         },
                         'to apply migration', 'foo.js'
                     )
-                    .then(() => expect(callOrder, 'to equal', [
-                        'up migration',
-                        'testUp hook',
-                        'down migration',
-                        'up migration'
-                    ]));
+                        .then(() => expect(callOrder, 'to equal', [
+                            'up migration',
+                            'testUp hook',
+                            'down migration',
+                            'up migration'
+                        ]));
                 });
 
                 it('formats the error correctly if the hook throws a sync error', function () {
@@ -1500,12 +1500,12 @@ describe('unexpected-knex', function () {
                         },
                         'to apply migration', 'foo.js'
                     )
-                    .then(() => expect(callOrder, 'to equal', [
-                        'up migration',
-                        'beforeDown hook',
-                        'down migration',
-                        'up migration'
-                    ]));
+                        .then(() => expect(callOrder, 'to equal', [
+                            'up migration',
+                            'beforeDown hook',
+                            'down migration',
+                            'up migration'
+                        ]));
                 });
 
                 it('formats the error correctly if the hook throws a sync error', function () {
@@ -1607,12 +1607,12 @@ describe('unexpected-knex', function () {
                         },
                         'to apply migration', 'foo.js'
                     )
-                    .then(() => expect(callOrder, 'to equal', [
-                        'up migration',
-                        'down migration',
-                        'testDown hook',
-                        'up migration'
-                    ]));
+                        .then(() => expect(callOrder, 'to equal', [
+                            'up migration',
+                            'down migration',
+                            'testDown hook',
+                            'up migration'
+                        ]));
                 });
 
                 it('formats the error correctly if the hook throws a sync error', function () {
@@ -1714,12 +1714,12 @@ describe('unexpected-knex', function () {
                         },
                         'to apply migration', 'foo.js'
                     )
-                    .then(() => expect(callOrder, 'to equal', [
-                        'up migration',
-                        'down migration',
-                        'up migration',
-                        'after hook'
-                    ]));
+                        .then(() => expect(callOrder, 'to equal', [
+                            'up migration',
+                            'down migration',
+                            'up migration',
+                            'after hook'
+                        ]));
                 });
 
                 it('formats the error correctly if the hook throws a sync error', function () {
@@ -1811,16 +1811,16 @@ describe('unexpected-knex', function () {
                         },
                         'to apply migration', 'foo.js'
                     )
-                    .then(() => expect(callOrder, 'to equal', [
-                        'beforeUp hook',
-                        'up migration',
-                        'testUp hook',
-                        'beforeDown hook',
-                        'down migration',
-                        'testDown hook',
-                        'up migration',
-                        'after hook'
-                    ]));
+                        .then(() => expect(callOrder, 'to equal', [
+                            'beforeUp hook',
+                            'up migration',
+                            'testUp hook',
+                            'beforeDown hook',
+                            'down migration',
+                            'testDown hook',
+                            'up migration',
+                            'after hook'
+                        ]));
                 });
 
                 it('halts at beforeUp if it fails', function () {
@@ -1869,9 +1869,9 @@ describe('unexpected-knex', function () {
                         to apply migration 'foo.js'
                           beforeUp failed with: Error('beforeUp error')`
                     )
-                    .then(() => expect(callOrder, 'to equal', [
-                        'beforeUp hook'
-                    ]));
+                        .then(() => expect(callOrder, 'to equal', [
+                            'beforeUp hook'
+                        ]));
                 });
 
                 it('halts at up migration if it fails', function () {
@@ -1919,10 +1919,10 @@ describe('unexpected-knex', function () {
                         to apply migration 'foo.js'
                           up migration failed with: Error('up migration error')`
                     )
-                    .then(() => expect(callOrder, 'to equal', [
-                        'beforeUp hook',
-                        'up migration'
-                    ]));
+                        .then(() => expect(callOrder, 'to equal', [
+                            'beforeUp hook',
+                            'up migration'
+                        ]));
                 });
 
                 it('halts at testUp if it fails', function () {
@@ -1971,11 +1971,11 @@ describe('unexpected-knex', function () {
                         to apply migration 'foo.js'
                           testUp failed with: Error('testUp error')`
                     )
-                    .then(() => expect(callOrder, 'to equal', [
-                        'beforeUp hook',
-                        'up migration',
-                        'testUp hook'
-                    ]));
+                        .then(() => expect(callOrder, 'to equal', [
+                            'beforeUp hook',
+                            'up migration',
+                            'testUp hook'
+                        ]));
                 });
 
                 it('halts at beforeDown if it fails', function () {
@@ -2024,12 +2024,12 @@ describe('unexpected-knex', function () {
                         to apply migration 'foo.js'
                           beforeDown failed with: Error('beforeDown error')`
                     )
-                    .then(() => expect(callOrder, 'to equal', [
-                        'beforeUp hook',
-                        'up migration',
-                        'testUp hook',
-                        'beforeDown hook'
-                    ]));
+                        .then(() => expect(callOrder, 'to equal', [
+                            'beforeUp hook',
+                            'up migration',
+                            'testUp hook',
+                            'beforeDown hook'
+                        ]));
                 });
 
                 it('halts at down migration if it fails', function () {
@@ -2077,13 +2077,13 @@ describe('unexpected-knex', function () {
                         to apply migration 'foo.js'
                           down migration failed with: Error('down migration error')`
                     )
-                    .then(() => expect(callOrder, 'to equal', [
-                        'beforeUp hook',
-                        'up migration',
-                        'testUp hook',
-                        'beforeDown hook',
-                        'down migration'
-                    ]));
+                        .then(() => expect(callOrder, 'to equal', [
+                            'beforeUp hook',
+                            'up migration',
+                            'testUp hook',
+                            'beforeDown hook',
+                            'down migration'
+                        ]));
                 });
 
                 it('halts at testDown if it fails', function () {
@@ -2132,14 +2132,14 @@ describe('unexpected-knex', function () {
                         to apply migration 'foo.js'
                           testDown failed with: Error('testDown error')`
                     )
-                    .then(() => expect(callOrder, 'to equal', [
-                        'beforeUp hook',
-                        'up migration',
-                        'testUp hook',
-                        'beforeDown hook',
-                        'down migration',
-                        'testDown hook'
-                    ]));
+                        .then(() => expect(callOrder, 'to equal', [
+                            'beforeUp hook',
+                            'up migration',
+                            'testUp hook',
+                            'beforeDown hook',
+                            'down migration',
+                            'testDown hook'
+                        ]));
                 });
 
                 it('halts at the second up migration if it fails on the second run', function () {
@@ -2192,15 +2192,15 @@ describe('unexpected-knex', function () {
                         to apply migration 'foo.js'
                           up migration after down migration failed with: Error('second up migration error')`
                     )
-                    .then(() => expect(callOrder, 'to equal', [
-                        'beforeUp hook',
-                        'up migration',
-                        'testUp hook',
-                        'beforeDown hook',
-                        'down migration',
-                        'testDown hook',
-                        'up migration'
-                    ]));
+                        .then(() => expect(callOrder, 'to equal', [
+                            'beforeUp hook',
+                            'up migration',
+                            'testUp hook',
+                            'beforeDown hook',
+                            'down migration',
+                            'testDown hook',
+                            'up migration'
+                        ]));
                 });
 
                 it('halts at after if it fails', function () {
@@ -2249,16 +2249,16 @@ describe('unexpected-knex', function () {
                         to apply migration 'foo.js'
                           after failed with: Error('after error')`
                     )
-                    .then(() => expect(callOrder, 'to equal', [
-                        'beforeUp hook',
-                        'up migration',
-                        'testUp hook',
-                        'beforeDown hook',
-                        'down migration',
-                        'testDown hook',
-                        'up migration',
-                        'after hook'
-                    ]));
+                        .then(() => expect(callOrder, 'to equal', [
+                            'beforeUp hook',
+                            'up migration',
+                            'testUp hook',
+                            'beforeDown hook',
+                            'down migration',
+                            'testDown hook',
+                            'up migration',
+                            'after hook'
+                        ]));
                 });
             });
         });
@@ -2285,7 +2285,7 @@ describe('unexpected-knex', function () {
                     },
                     'to apply migration', '2-foo.js'
                 )
-                .then(() => expect(knex, 'to have column', { foo: 'bar' }));
+                    .then(() => expect(knex, 'to have column', { foo: 'bar' }));
             });
 
             it('run all migrations before the provided filename after sorting', function () {
@@ -2309,7 +2309,7 @@ describe('unexpected-knex', function () {
                     },
                     'to apply migration', '2-foo.js'
                 )
-                .then(() => expect(knex, 'to have column', { foo: 'bar' }));
+                    .then(() => expect(knex, 'to have column', { foo: 'bar' }));
             });
 
             it('does not run migrations after the provided filename', function () {
@@ -2339,8 +2339,8 @@ describe('unexpected-knex', function () {
                     },
                     'to apply migration', '2-foo.js'
                 )
-                .then(() => expect(knex, 'to have column', { foo: 'bar' }))
-                .then(() => expect(knex, 'not to have table', 'bar'));
+                    .then(() => expect(knex, 'to have column', { foo: 'bar' }))
+                    .then(() => expect(knex, 'not to have table', 'bar'));
             });
         });
     });
