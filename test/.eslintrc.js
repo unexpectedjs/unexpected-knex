@@ -1,5 +1,5 @@
 module.exports = {
   env: {
-    es6: false
+    es6: true
   }
 };
