@@ -560,7 +560,7 @@ describe('unexpected-knex', function() {
         'when passed as parameter to',
         query => query.toQuery(),
         'to be',
-        'select * from "foo"'
+        'select * from `foo`'
       );
     });
 
@@ -573,7 +573,7 @@ describe('unexpected-knex', function() {
         'when passed as parameter to',
         query => query.toQuery(),
         'to be',
-        'select * from "foo"'
+        'select * from `foo`'
       );
     });
 
@@ -582,7 +582,7 @@ describe('unexpected-knex', function() {
         () => expect(knex, 'with table', 'foo', 'to equal', 'foo'),
         'to error with',
         dontIndent`
-                expected 'select * from "foo"' to equal 'foo'
+                expected 'select * from \`foo\`' to equal 'foo'
                 `
       );
     });
@@ -653,7 +653,7 @@ describe('unexpected-knex', function() {
             ]),
             'to be rejected with',
             dontIndent`
-                expected 'select * from "foo"'
+                expected 'select * from \`foo\`'
                 to have rows satisfying [ { bar: 'foobar1' }, { bar: 'foobar20' } ]
 
                 [
@@ -682,7 +682,7 @@ describe('unexpected-knex', function() {
             expect(knex('foo'), 'to have rows satisfying', []),
             'to be rejected with',
             dontIndent`
-                expected 'select * from "foo"' to have rows satisfying []
+                expected 'select * from \`foo\`' to have rows satisfying []
 
                 [
                   { bar: 'foobar1' }, // should be removed
@@ -713,7 +713,7 @@ describe('unexpected-knex', function() {
               ]),
               'to be rejected with',
               dontIndent`
-                    expected 'select * from "foo"'
+                    expected 'select * from \`foo\`'
                     to have rows exhaustively satisfying [ { bar: 'bar1' }, { bar: 'bar2' } ]
 
                     [
@@ -781,7 +781,7 @@ describe('unexpected-knex', function() {
             expect(knex('foo'), 'to be empty'),
             'to be rejected with',
             dontIndent`
-                expected 'select * from "foo"' to be empty`
+                expected 'select * from \`foo\`' to be empty`
           )
         );
     });
@@ -810,7 +810,7 @@ describe('unexpected-knex', function() {
               expect(knex('foo'), 'not to be empty'),
               'to be rejected with',
               dontIndent`
-                    expected 'select * from "foo"' not to be empty`
+                    expected 'select * from \`foo\`' not to be empty`
             )
           );
       });
@@ -890,7 +890,7 @@ describe('unexpected-knex', function() {
             ),
             'to be rejected with',
             dontIndent`
-                expected 'select * from "foo"'
+                expected 'select * from \`foo\`'
                 to have rows satisfying expect.it('to equal', [ { bar: 'foobar1' }, { bar: 'foobar20' } ])
 
                 expected [ { bar: 'foobar1' }, { bar: 'foobar2' } ]
@@ -926,7 +926,7 @@ describe('unexpected-knex', function() {
             ),
             'to be rejected with',
             dontIndent`
-                expected 'select * from "foo"' to have rows satisfying expect.it('to equal', [])
+                expected 'select * from \`foo\`' to have rows satisfying expect.it('to equal', [])
 
                 expected [ { bar: 'foobar1' }, { bar: 'foobar2' } ] to equal []
 
@@ -1007,7 +1007,7 @@ describe('unexpected-knex', function() {
             ),
             'to be rejected with',
             dontIndent`
-                expected 'select * from "foo"'
+                expected 'select * from \`foo\`'
                 to have rows satisfying function ( /*...*/ ) { /*...*/ }
 
                 [
@@ -1038,7 +1038,7 @@ describe('unexpected-knex', function() {
             ),
             'to be rejected with',
             dontIndent`
-                expected 'select * from "foo"'
+                expected 'select * from \`foo\`'
                 to have rows satisfying function ( /*...*/ ) { /*...*/ }
 
                 [
@@ -1094,7 +1094,7 @@ describe('unexpected-knex', function() {
             () => expect(knex('foo'), 'to have a row satisfying', {}),
             'to be rejected with',
             dontIndent`
-                expected 'select * from "foo"' to have a row satisfying {}
+                expected 'select * from \`foo\`' to have a row satisfying {}
                   cannot assert that a row has no columns or fields`
           )
         );
@@ -1115,7 +1115,7 @@ describe('unexpected-knex', function() {
             }),
             'to be rejected with',
             dontIndent`
-                expected 'select * from "foo"' to have a row satisfying { bar: 'foobar20' }
+                expected 'select * from \`foo\`' to have a row satisfying { bar: 'foobar20' }
 
                 expected array to have an item satisfying { bar: 'foobar20' }
                 `
@@ -1143,7 +1143,7 @@ describe('unexpected-knex', function() {
               }),
               'to be rejected with',
               dontIndent`
-                    expected 'select * from "foo"'
+                    expected 'select * from \`foo\`'
                     to have a row exhaustively satisfying { bar: 'bar1' }
 
                     expected array to have an item exhaustively satisfying { bar: 'bar1' }`
@@ -2486,7 +2486,7 @@ describe('unexpected-knex', function() {
     });
 
     describe('with multiple migration files', function() {
-      it('run all migrations before the provided filename', function() {
+      it('runs all migrations before the provided filename', function() {
         return expect(
           knex,
           'with the migrations directory containing',
@@ -2514,7 +2514,7 @@ describe('unexpected-knex', function() {
         ).then(() => expect(knex, 'to have column', { foo: 'bar' }));
       });
 
-      it('run all migrations before the provided filename after sorting', function() {
+      it('runs all migrations before the provided filename after sorting', function() {
         return expect(
           knex,
           'with the migrations directory containing',
@@ -2567,6 +2567,7 @@ describe('unexpected-knex', function() {
             '3-foo.js': {
               up: knex =>
                 knex.schema.createTable('bar', table => {
+                  // if this migration were to run it would trigger an error
                   table.dropColumn('baz');
                 }),
               down: knex => knex.schema.dropTable('bar')

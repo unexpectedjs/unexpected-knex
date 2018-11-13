@@ -23,7 +23,7 @@
   "author": "Joel Mukuthu <joelmukuthu@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
-    "knex": "^0.13.0",
+    "knex": "^0.15.2",
     "unexpected": "^10.27.0"
   },
   "devDependencies": {
@@ -60,5 +60,8 @@
   "bugs": {
     "url": "https://github.com/unexpectedjs/unexpected-knex/issues"
   },
-  "homepage": "https://github.com/unexpectedjs/unexpected-knex#readme"
+  "homepage": "https://github.com/unexpectedjs/unexpected-knex#readme",
+  "dependencies": {
+    "proxyquire": "2.1.0"
+  }
 }
