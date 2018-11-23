@@ -209,12 +209,18 @@ describe('unexpected-knex', function() {
       });
 
       it('fulfils if the schema and table do not exist', function() {
-        return knex.raw(`
+        return knex
+          .raw(
+            `
         DROP SCHEMA IF EXISTS foo CASCADE;
-      `).then(() => expect(
-          expect(knex, 'not to have table', 'foo.foo'),
-          'to be fulfilled'
-        ));
+      `
+          )
+          .then(() =>
+            expect(
+              expect(knex, 'not to have table', 'foo.foo'),
+              'to be fulfilled'
+            )
+          );
       });
 
       it('fulfils if the schema exists but the table does not', function() {
