@@ -123,6 +123,54 @@ describe('unexpected-knex', function() {
         /to have table 'foo'/
       );
     });
+
+    describe('with the schema-name included (dot-separated)', function() {
+      beforeEach(function() {
+        return knex.raw(`
+          CREATE SCHEMA foo;
+        `);
+      });
+
+      afterEach(function() {
+        return knex.raw(`
+          DROP SCHEMA IF EXISTS foo CASCADE;
+        `);
+      });
+
+      it('fulfils if the schema and table exist', function() {
+        return knex.schema
+          .withSchema('foo')
+          .createTable('foo', table => {
+            table.timestamps();
+          })
+          .then(() =>
+            expect(expect(knex, 'to have table', 'foo.foo'), 'to be fulfilled')
+          );
+      });
+
+      it('rejects if the schema exists but the table does not', function() {
+        return knex.schema
+          .withSchema('foo')
+          .createTable('bar', table => {
+            table.timestamps();
+          })
+          .then(() =>
+            expect(
+              expect(knex, 'to have table', 'foo.foo'),
+              'to be rejected with',
+              /to have table 'foo.foo'/
+            )
+          );
+      });
+
+      it('rejects if the schema does not exist', function() {
+        return expect(
+          expect(knex, 'to have table', 'foo.foo'),
+          'to be rejected with',
+          /to have table 'foo.foo'/
+        );
+      });
+    });
   });
 
   describe('<knex> not to have table <string>', function() {
@@ -145,6 +193,58 @@ describe('unexpected-knex', function() {
             /not to have table 'foo'/
           )
         );
+    });
+
+    describe('with the schema-name included (dot-separated)', function() {
+      beforeEach(function() {
+        return knex.raw(`
+          CREATE SCHEMA foo;
+        `);
+      });
+
+      afterEach(function() {
+        return knex.raw(`
+          DROP SCHEMA IF EXISTS foo CASCADE;
+        `);
+      });
+
+      it('fulfils if the schema and table do not exist', function() {
+        return knex.raw(`
+        DROP SCHEMA IF EXISTS foo CASCADE;
+      `).then(() => expect(
+          expect(knex, 'not to have table', 'foo.foo'),
+          'to be fulfilled'
+        ));
+      });
+
+      it('fulfils if the schema exists but the table does not', function() {
+        return knex.schema
+          .withSchema('foo')
+          .createTable('bar', table => {
+            table.timestamps();
+          })
+          .then(() =>
+            expect(
+              expect(knex, 'not to have table', 'foo.foo'),
+              'to be fulfilled'
+            )
+          );
+      });
+
+      it('rejects if the schema and table do exist', function() {
+        return knex.schema
+          .withSchema('foo')
+          .createTable('foo', table => {
+            table.timestamps();
+          })
+          .then(() =>
+            expect(
+              expect(knex, 'not to have table', 'foo.foo'),
+              'to be rejected with',
+              /not to have table 'foo.foo'/
+            )
+          );
+      });
     });
   });
 
