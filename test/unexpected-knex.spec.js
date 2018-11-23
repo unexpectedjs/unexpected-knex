@@ -8,27 +8,31 @@ const unexpectedKnex = require('../lib/unexpected-knex');
 const dontIndent = require('dedent-js');
 
 describe('unexpected-knex', function() {
-  function createKnex() {
-    return Knex({
-      client: 'sqlite3',
-      connection: {
-        filename: ':memory:'
-      },
-      migrations: {
-        directory: './migrations'
-      },
-      useNullAsDefault: true
-    });
-  }
-  let knex = createKnex();
+  const host = process.env.PGHOST || 'localhost';
+  const knex = Knex({
+    client: 'pg',
+    connection: {
+      host,
+      port: '5432',
+      database: 'postgres',
+      user: 'postgres',
+      password: ''
+    },
+    migrations: { directory: './migrations' }
+  });
   // synonymous to './migrations' as specified in the knex config
   const migrationsDirectory = `${process.cwd()}/migrations`;
   const knexOutputBlock = dontIndent`
         knex({
-          client: 'sqlite3',
-          connection: { filename: ':memory:' },
-          migrations: { directory: './migrations' },
-          useNullAsDefault: true
+          client: 'pg',
+          connection: {
+            host: '${host}',
+            port: '5432',
+            database: 'postgres',
+            user: 'postgres',
+            password: ''
+          },
+          migrations: { directory: './migrations' }
         })`;
   const expect = unexpected
     .clone()
@@ -87,7 +91,18 @@ describe('unexpected-knex', function() {
     );
 
   afterEach(function() {
-    return knex.destroy().then(() => (knex = createKnex()));
+    const user = knex.client.config.connection.user;
+    return knex.raw(`
+      DROP SCHEMA IF EXISTS public CASCADE;
+      CREATE SCHEMA public;
+      GRANT ALL ON SCHEMA public TO "${user}";
+      GRANT ALL ON SCHEMA public TO public;
+      COMMENT ON SCHEMA public IS 'standard public schema';
+    `);
+  });
+
+  after(function() {
+    return knex.destroy();
   });
 
   describe('<knex> to have table <string>', function() {
@@ -105,10 +120,7 @@ describe('unexpected-knex', function() {
       return expect(
         expect(knex, 'to have table', 'foo'),
         'to be rejected with',
-        dontIndent`
-                expected
-                ${knexOutputBlock}
-                to have table 'foo'`
+        /to have table 'foo'/
       );
     });
   });
@@ -130,10 +142,7 @@ describe('unexpected-knex', function() {
           expect(
             expect(knex, 'not to have table', 'foo'),
             'to be rejected with',
-            dontIndent`
-                expected
-                ${knexOutputBlock}
-                not to have table 'foo'`
+            /not to have table 'foo'/
           )
         );
     });
@@ -162,10 +171,7 @@ describe('unexpected-knex', function() {
           expect(
             expect(knex, 'to have column', { foo: 'baz' }),
             'to be rejected with',
-            dontIndent`
-                expected
-                ${knexOutputBlock}
-                to have column { foo: 'baz' }`
+            /to have column { foo: 'baz' }/
           )
         );
     });
@@ -174,10 +180,7 @@ describe('unexpected-knex', function() {
       return expect(
         expect(knex, 'to have column', { foo: 'bar' }),
         'to be rejected with',
-        dontIndent`
-                expected
-                ${knexOutputBlock}
-                to have column { foo: 'bar' }`
+        /to have column { foo: 'bar' }/
       );
     });
 
@@ -185,11 +188,7 @@ describe('unexpected-knex', function() {
       return expect(
         () => expect(knex, 'to have column', { foo: 'bar', bar: 'baz' }),
         'to error with',
-        dontIndent`
-                expected
-                ${knexOutputBlock}
-                to have column { foo: 'bar', bar: 'baz' }
-                  Provide a single column in the form: { tableName: columnName }`
+        /Provide a single column in the form: { tableName: columnName }/
       );
     });
   });
@@ -217,10 +216,7 @@ describe('unexpected-knex', function() {
           expect(
             expect(knex, 'not to have column', { foo: 'bar' }),
             'to be rejected with',
-            dontIndent`
-                expected
-                ${knexOutputBlock}
-                not to have column { foo: 'bar' }`
+            /not to have column { foo: 'bar' }/
           )
         );
     });
@@ -236,11 +232,7 @@ describe('unexpected-knex', function() {
       return expect(
         () => expect(knex, 'not to have column', { foo: 'bar', bar: 'baz' }),
         'to error with',
-        dontIndent`
-                expected
-                ${knexOutputBlock}
-                not to have column { foo: 'bar', bar: 'baz' }
-                  Provide a single column in the form: { tableName: columnName }`
+        /Provide a single column in the form: { tableName: columnName }/
       );
     });
   });
@@ -268,12 +260,8 @@ describe('unexpected-knex', function() {
         .then(() =>
           expect(
             expect(knex, 'to have columns', { foo: ['bar', 'baz'] }),
-            'to be rejected with',
-            dontIndent`
-                expected
-                ${knexOutputBlock}
-                to have columns { foo: [ 'bar', 'baz' ] }
-                  expected knex to have column { foo: 'baz' }`
+            'to be rejected with error satisfying',
+            /expected knex to have column { foo: 'baz' }/
           )
         );
     });
@@ -286,12 +274,8 @@ describe('unexpected-knex', function() {
         .then(() =>
           expect(
             expect(knex, 'to have columns', { foo: ['baz', 'quux'] }),
-            'to be rejected with',
-            dontIndent`
-                expected
-                ${knexOutputBlock}
-                to have columns { foo: [ 'baz', 'quux' ] }
-                  expected knex to have column { foo: 'baz' }`
+            'to be rejected with error satisfying',
+            /expected knex to have column { foo: '(baz|quux)' }/
           )
         );
     });
@@ -300,11 +284,7 @@ describe('unexpected-knex', function() {
       return expect(
         expect(knex, 'to have columns', { foo: ['baz', 'quux'] }),
         'to be rejected with',
-        dontIndent`
-                expected
-                ${knexOutputBlock}
-                to have columns { foo: [ 'baz', 'quux' ] }
-                  expected knex to have column { foo: 'baz' }`
+        /expected knex to have column { foo: '(baz|quux)' }/
       );
     });
 
@@ -347,11 +327,7 @@ describe('unexpected-knex', function() {
               bar: 'baz'
             }),
             'to be rejected with',
-            dontIndent`
-                expected
-                ${knexOutputBlock}
-                to have columns { foo: [ 'bar', 'baz' ], bar: 'baz' }
-                  expected knex to have column { foo: 'baz' }`
+            /expected knex to have column { (foo|bar): '(bar|baz)' }/
           )
         );
     });
@@ -370,16 +346,12 @@ describe('unexpected-knex', function() {
           expect(
             expect(knex, 'to have columns', { foo: 'quux', bar: 'quux' }),
             'to be rejected with',
-            dontIndent`
-                expected
-                ${knexOutputBlock}
-                to have columns { foo: 'quux', bar: 'quux' }
-                  expected knex to have column { foo: 'quux' }`
+            /expected knex to have column { (foo|bar): 'quux' }/
           )
         );
     });
 
-    it('rejects if one of the tables do not exist', function() {
+    it('rejects if one of the tables does not exist', function() {
       return knex.schema
         .createTable('foo', table => {
           table.string('bar');
@@ -388,11 +360,7 @@ describe('unexpected-knex', function() {
           expect(
             expect(knex, 'to have columns', { foo: 'bar', bar: 'quux' }),
             'to be rejected with',
-            dontIndent`
-                expected
-                ${knexOutputBlock}
-                to have columns { foo: 'bar', bar: 'quux' }
-                  expected knex to have column { bar: 'quux' }`
+            /expected knex to have column { bar: 'quux' }/
           )
         );
     });
@@ -401,11 +369,7 @@ describe('unexpected-knex', function() {
       return expect(
         expect(knex, 'to have columns', { foo: 'bar', bar: 'quux' }),
         'to be rejected with',
-        dontIndent`
-                expected
-                ${knexOutputBlock}
-                to have columns { foo: 'bar', bar: 'quux' }
-                  expected knex to have column { foo: 'bar' }`
+        /expected knex to have column { (foo|bar): '(bar|quux)' }/
       );
     });
   });
@@ -434,11 +398,7 @@ describe('unexpected-knex', function() {
           expect(
             expect(knex, 'not to have columns', { foo: ['bar', 'baz'] }),
             'to be rejected with',
-            dontIndent`
-                expected
-                ${knexOutputBlock}
-                not to have columns { foo: [ 'bar', 'baz' ] }
-                  expected knex not to have column { foo: 'bar' }`
+            /expected knex not to have column { foo: 'bar' }/
           )
         );
     });
@@ -453,11 +413,7 @@ describe('unexpected-knex', function() {
           expect(
             expect(knex, 'not to have columns', { foo: ['bar', 'baz'] }),
             'to be rejected with',
-            dontIndent`
-                expected
-                ${knexOutputBlock}
-                not to have columns { foo: [ 'bar', 'baz' ] }
-                  expected knex not to have column { foo: 'bar' }`
+            /expected knex not to have column { foo: '(bar|baz)' }/
           )
         );
     });
@@ -507,16 +463,12 @@ describe('unexpected-knex', function() {
               bar: 'quux'
             }),
             'to be rejected with',
-            dontIndent`
-                expected
-                ${knexOutputBlock}
-                not to have columns { foo: [ 'baz', 'bar' ], bar: 'quux' }
-                  expected knex not to have column { foo: 'bar' }`
+            /expected knex not to have column { foo: 'bar' }/
           )
         );
     });
 
-    it('rejects if all columns in all of the tables exists', function() {
+    it('rejects if all columns in all of the tables exist', function() {
       return knex.schema
         .createTable('foo', table => {
           table.string('bar');
@@ -530,11 +482,7 @@ describe('unexpected-knex', function() {
           expect(
             expect(knex, 'not to have columns', { foo: 'bar', bar: 'baz' }),
             'to be rejected with',
-            dontIndent`
-                expected
-                ${knexOutputBlock}
-                not to have columns { foo: 'bar', bar: 'baz' }
-                  expected knex not to have column { foo: 'bar' }`
+            /expected knex not to have column { (foo|bar): '(bar|baz)' }/
           )
         );
     });
@@ -560,7 +508,7 @@ describe('unexpected-knex', function() {
         'when passed as parameter to',
         query => query.toQuery(),
         'to be',
-        'select * from `foo`'
+        'select * from "foo"'
       );
     });
 
@@ -573,7 +521,7 @@ describe('unexpected-knex', function() {
         'when passed as parameter to',
         query => query.toQuery(),
         'to be',
-        'select * from `foo`'
+        'select * from "foo"'
       );
     });
 
@@ -582,7 +530,7 @@ describe('unexpected-knex', function() {
         () => expect(knex, 'with table', 'foo', 'to equal', 'foo'),
         'to error with',
         dontIndent`
-                expected 'select * from \`foo\`' to equal 'foo'
+                expected 'select * from "foo"' to equal 'foo'
                 `
       );
     });
@@ -653,7 +601,7 @@ describe('unexpected-knex', function() {
             ]),
             'to be rejected with',
             dontIndent`
-                expected 'select * from \`foo\`'
+                expected 'select * from "foo"'
                 to have rows satisfying [ { bar: 'foobar1' }, { bar: 'foobar20' } ]
 
                 [
@@ -682,7 +630,7 @@ describe('unexpected-knex', function() {
             expect(knex('foo'), 'to have rows satisfying', []),
             'to be rejected with',
             dontIndent`
-                expected 'select * from \`foo\`' to have rows satisfying []
+                expected 'select * from "foo"' to have rows satisfying []
 
                 [
                   { bar: 'foobar1' }, // should be removed
@@ -713,7 +661,7 @@ describe('unexpected-knex', function() {
               ]),
               'to be rejected with',
               dontIndent`
-                    expected 'select * from \`foo\`'
+                    expected 'select * from "foo"'
                     to have rows exhaustively satisfying [ { bar: 'bar1' }, { bar: 'bar2' } ]
 
                     [
@@ -781,7 +729,7 @@ describe('unexpected-knex', function() {
             expect(knex('foo'), 'to be empty'),
             'to be rejected with',
             dontIndent`
-                expected 'select * from \`foo\`' to be empty`
+                expected 'select * from "foo"' to be empty`
           )
         );
     });
@@ -810,7 +758,7 @@ describe('unexpected-knex', function() {
               expect(knex('foo'), 'not to be empty'),
               'to be rejected with',
               dontIndent`
-                    expected 'select * from \`foo\`' not to be empty`
+                    expected 'select * from "foo"' not to be empty`
             )
           );
       });
@@ -890,7 +838,7 @@ describe('unexpected-knex', function() {
             ),
             'to be rejected with',
             dontIndent`
-                expected 'select * from \`foo\`'
+                expected 'select * from "foo"'
                 to have rows satisfying expect.it('to equal', [ { bar: 'foobar1' }, { bar: 'foobar20' } ])
 
                 expected [ { bar: 'foobar1' }, { bar: 'foobar2' } ]
@@ -926,7 +874,7 @@ describe('unexpected-knex', function() {
             ),
             'to be rejected with',
             dontIndent`
-                expected 'select * from \`foo\`' to have rows satisfying expect.it('to equal', [])
+                expected 'select * from "foo"' to have rows satisfying expect.it('to equal', [])
 
                 expected [ { bar: 'foobar1' }, { bar: 'foobar2' } ] to equal []
 
@@ -1007,7 +955,7 @@ describe('unexpected-knex', function() {
             ),
             'to be rejected with',
             dontIndent`
-                expected 'select * from \`foo\`'
+                expected 'select * from "foo"'
                 to have rows satisfying function ( /*...*/ ) { /*...*/ }
 
                 [
@@ -1038,7 +986,7 @@ describe('unexpected-knex', function() {
             ),
             'to be rejected with',
             dontIndent`
-                expected 'select * from \`foo\`'
+                expected 'select * from "foo"'
                 to have rows satisfying function ( /*...*/ ) { /*...*/ }
 
                 [
@@ -1094,7 +1042,7 @@ describe('unexpected-knex', function() {
             () => expect(knex('foo'), 'to have a row satisfying', {}),
             'to be rejected with',
             dontIndent`
-                expected 'select * from \`foo\`' to have a row satisfying {}
+                expected 'select * from "foo"' to have a row satisfying {}
                   cannot assert that a row has no columns or fields`
           )
         );
@@ -1115,7 +1063,7 @@ describe('unexpected-knex', function() {
             }),
             'to be rejected with',
             dontIndent`
-                expected 'select * from \`foo\`' to have a row satisfying { bar: 'foobar20' }
+                expected 'select * from "foo"' to have a row satisfying { bar: 'foobar20' }
 
                 expected array to have an item satisfying { bar: 'foobar20' }
                 `
@@ -1143,7 +1091,7 @@ describe('unexpected-knex', function() {
               }),
               'to be rejected with',
               dontIndent`
-                    expected 'select * from \`foo\`'
+                    expected 'select * from "foo"'
                     to have a row exhaustively satisfying { bar: 'bar1' }
 
                     expected array to have an item exhaustively satisfying { bar: 'bar1' }`

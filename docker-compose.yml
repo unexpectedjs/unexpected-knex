@@ -1,0 +1,15 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:10.4
+    container_name: unexpected-knex
+
+  unexpected-knex:
+    build: .
+    command: npm run test:mocha
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - postgres
+    environment:
+      PGHOST: postgres
