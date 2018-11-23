@@ -4,7 +4,7 @@ services:
   - postgresql
 
 addons:
-  postgresql: "10.4"
+  postgresql: "9.6"
 
 node_js:
    - "6" # unexpected-fs does not support node >= 8

@@ -1,7 +1,7 @@
 version: '3'
 services:
   postgres:
-    image: postgres:10.4
+    image: postgres:9.6
     container_name: unexpected-knex
 
   unexpected-knex:
