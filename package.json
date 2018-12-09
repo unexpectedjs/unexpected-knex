@@ -30,7 +30,7 @@
   "devDependencies": {
     "coveralls": "3.0.2",
     "dedent-js": "1.0.1",
-    "eslint": "5.9.0",
+    "eslint": "5.10.0",
     "eslint-config-prettier": "3.3.0",
     "eslint-config-pretty-standard": "2.0.0",
     "eslint-plugin-mocha": "5.2.0",
