@@ -621,7 +621,7 @@ describe('unexpected-knex', function() {
     it('resolves with the query builder if no assertion is provided', function() {
       return expect(
         expect(knex, 'with table', 'foo'),
-        'to be rejected with error satisfying', 
+        'to be rejected with error satisfying',
         // unexpected auto-runs the query since it's a thenable
         { message: 'select * from "foo" - relation "foo" does not exist' }
       );
