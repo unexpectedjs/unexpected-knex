@@ -618,16 +618,12 @@ describe('unexpected-knex', function() {
       );
     });
 
-    it('resolves with the query if no assertion is provided', function() {
+    it('resolves with the query builder if no assertion is provided', function() {
       return expect(
         expect(knex, 'with table', 'foo'),
-        'to be a',
-        QueryBuilder
-      ).and(
-        'when passed as parameter to',
-        query => query.toQuery(),
-        'to be',
-        'select * from "foo"'
+        'to be rejected with error satisfying', 
+        // unexpected auto-runs the query since it's a thenable
+        { message: 'select * from "foo" - relation "foo" does not exist' }
       );
     });
 
@@ -1061,8 +1057,12 @@ describe('unexpected-knex', function() {
             ),
             'to be rejected with',
             dontIndent`
-                expected 'select * from "foo"'
-                to have rows satisfying function ( /*...*/ ) { /*...*/ }
+                expected 'select * from "foo"' to have rows satisfying
+                rows =>
+                  expect(rows, 'to equal', [
+                    { bar: 'foobar1' },
+                    { bar: 'foobar20' }
+                  ])
 
                 [
                   { bar: 'foobar1' },
@@ -1092,8 +1092,9 @@ describe('unexpected-knex', function() {
             ),
             'to be rejected with',
             dontIndent`
-                expected 'select * from "foo"'
-                to have rows satisfying function ( /*...*/ ) { /*...*/ }
+                expected 'select * from "foo"' to have rows satisfying
+                rows =>
+                expect(rows, 'to equal', [])
 
                 [
                   { bar: 'foobar1' }, // should be removed
@@ -1171,7 +1172,8 @@ describe('unexpected-knex', function() {
             dontIndent`
                 expected 'select * from "foo"' to have a row satisfying { bar: 'foobar20' }
 
-                expected array to have an item satisfying { bar: 'foobar20' }
+                expected [ { bar: 'foobar1' }, { bar: 'foobar2' } ]
+                to have an item satisfying { bar: 'foobar20' }
                 `
           )
         );
@@ -1200,7 +1202,8 @@ describe('unexpected-knex', function() {
                     expected 'select * from "foo"'
                     to have a row exhaustively satisfying { bar: 'bar1' }
 
-                    expected array to have an item exhaustively satisfying { bar: 'bar1' }`
+                    expected [ { bar: 'bar1', baz: 'baz1' }, { bar: 'bar2', baz: 'baz2' } ]
+                    to have an item exhaustively satisfying { bar: 'bar1' }`
             )
           );
       });
