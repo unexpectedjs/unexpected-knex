@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "test:mocha": "mocha --bail",
+    "test:mocha": "mocha --exit",
     "test": "docker-compose run --rm unexpected-knex",
     "coverage": "nyc mocha",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
@@ -41,7 +41,7 @@
     "nyc": "13.1.0",
     "pg": "7.7.1",
     "prettier": "1.15.3",
-    "unexpected": "10.29.0",
+    "unexpected": "10.40.0",
     "unexpected-fs": "3.0.0",
     "unexpected-require": "2.0.0"
   },
