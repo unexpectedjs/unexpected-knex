@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "test:mocha": "mocha --bail",
+    "test:mocha": "mocha --exit",
     "test": "docker-compose run --rm unexpected-knex",
     "coverage": "nyc mocha",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
