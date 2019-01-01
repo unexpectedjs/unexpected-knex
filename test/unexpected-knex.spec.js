@@ -807,6 +807,142 @@ describe('unexpected-knex', function() {
     });
   });
 
+  describe('<knexQuery> to have sorted rows satisfying <array>', function() {
+    it('asserts the data returned sorted by `id` in ascending order', function() {
+      return knex.schema
+        .createTable('foo', table => {
+          table.increments();
+          table.string('bar');
+        })
+        .then(() =>
+          knex('foo').insert([
+            { id: 2, bar: 'foobar2' },
+            { id: 1, bar: 'foobar1' }
+          ])
+        )
+        .then(() =>
+          expect(
+            expect(knex('foo'), 'to have sorted rows satisfying', [
+              { id: 1, bar: 'foobar1' },
+              { id: 2, bar: 'foobar2' }
+            ]),
+            'to be fulfilled'
+          )
+        );
+    });
+
+    it("rejects with the correct error if the order doesn't match", function() {
+      return knex.schema
+        .createTable('foo', table => {
+          table.increments();
+          table.string('bar');
+        })
+        .then(() =>
+          knex('foo').insert([
+            { id: 1, bar: 'foobar1' },
+            { id: 2, bar: 'foobar2' }
+          ])
+        )
+        .then(() =>
+          expect(
+            expect(knex('foo'), 'to have sorted rows satisfying', [
+              { id: 2, bar: 'foobar2' },
+              { id: 1, bar: 'foobar1' }
+            ]),
+            'to be rejected with',
+            dontIndent`
+                expected 'select * from "foo"'
+                to have sorted rows satisfying [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ]
+                
+                expected [ { id: 1, bar: 'foobar1' }, { id: 2, bar: 'foobar2' } ]
+                sorted by (a, b) => parseInt(a.id) - parseInt(b.id) to satisfy [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ]
+                
+                [
+                  {
+                    id: 1, // should equal 2
+                    bar: 'foobar1' // should equal 'foobar2'
+                                   //
+                                   // -foobar1
+                                   // +foobar2
+                  },
+                  {
+                    id: 2, // should equal 1
+                    bar: 'foobar2' // should equal 'foobar1'
+                                   //
+                                   // -foobar2
+                                   // +foobar1
+                  }
+                ]`
+          )
+        );
+    });
+
+    describe('with the "exhaustively" flag', function() {
+      it('rejects if all rows are not exhaustively described in the expected output', function() {
+        return knex.schema
+          .createTable('foo', table => {
+            table.increments();
+            table.string('bar');
+          })
+          .then(() =>
+            knex('foo').insert([
+              { id: 1, bar: 'foobar1' },
+              { id: 2, bar: 'foobar2' }
+            ])
+          )
+          .then(() =>
+            expect(
+              expect(
+                knex('foo'),
+                'to have sorted rows exhaustively satisfying',
+                [{ id: 1, bar: 'foobar1' }, { id: 2 }]
+              ),
+              'to be rejected with',
+              dontIndent`
+                expected 'select * from "foo"'
+                to have sorted rows exhaustively satisfying [ { id: 1, bar: 'foobar1' }, { id: 2 } ]
+                
+                expected [ { id: 1, bar: 'foobar1' }, { id: 2, bar: 'foobar2' } ]
+                sorted by (a, b) => parseInt(a.id) - parseInt(b.id) to exhaustively satisfy [ { id: 1, bar: 'foobar1' }, { id: 2 } ]
+                
+                [
+                  { id: 1, bar: 'foobar1' },
+                  {
+                    id: 2,
+                    bar: 'foobar2' // should be removed
+                  }
+                ]`
+            )
+          );
+      });
+    });
+
+    describe('without the "exhaustively" flag', function() {
+      it("doesn't reject if some row is not exhaustively described in the expected output", function() {
+        return knex.schema
+          .createTable('foo', table => {
+            table.increments();
+            table.string('bar');
+          })
+          .then(() =>
+            knex('foo').insert([
+              { id: 1, bar: 'foobar1' },
+              { id: 2, bar: 'foobar2' }
+            ])
+          )
+          .then(() =>
+            expect(
+              expect(knex('foo'), 'to have sorted rows satisfying', [
+                { id: 1, bar: 'foobar1' },
+                { id: 2 }
+              ]),
+              'to be fulfilled'
+            )
+          );
+      });
+    });
+  });
+
   describe('<knexQuery> to be empty', function() {
     it('runs the query and asserts that the returned array is empty', function() {
       return knex.schema
