@@ -6,6 +6,7 @@ const unexpectedFs = require('unexpected-fs');
 const unexpectedRequire = require('unexpected-require');
 const unexpectedKnex = require('../lib/unexpected-knex');
 const dontIndent = require('dedent-js');
+const assertErrorOuput = process.env.ASSERT_ERROR_OUTPUT !== 'false';
 
 describe('unexpected-knex', function() {
   const host = process.env.PGHOST || 'localhost';
@@ -843,38 +844,43 @@ describe('unexpected-knex', function() {
             { id: 2, bar: 'foobar2' }
           ])
         )
-        .then(() =>
-          expect(
+        .then(() => {
+          const errorOutput = dontIndent`
+          expected 'select * from "foo"'
+          to have sorted rows satisfying [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ]
+
+          expected [ { id: 1, bar: 'foobar1' }, { id: 2, bar: 'foobar2' } ] sorted by
+          function ascendingOrder(a, b) {
+            return parseInt(a.id) - parseInt(b.id);
+          } to satisfy [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ]
+
+          [
+            {
+              id: 1, // should equal 2
+              bar: 'foobar1' // should equal 'foobar2'
+                             //
+                             // -foobar1
+                             // +foobar2
+            },
+            {
+              id: 2, // should equal 1
+              bar: 'foobar2' // should equal 'foobar1'
+                             //
+                             // -foobar2
+                             // +foobar1
+            }
+          ]`;
+          const assertion = assertErrorOuput
+            ? ['to be rejected with error satisfying', errorOutput]
+            : ['to be rejected'];
+          return expect(
             expect(knex('foo'), 'to have sorted rows satisfying', [
               { id: 2, bar: 'foobar2' },
               { id: 1, bar: 'foobar1' }
             ]),
-            'to be rejected with',
-            dontIndent`
-                expected 'select * from "foo"'
-                to have sorted rows satisfying [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ]
-                
-                expected [ { id: 1, bar: 'foobar1' }, { id: 2, bar: 'foobar2' } ]
-                sorted by (a, b) => parseInt(a.id) - parseInt(b.id) to satisfy [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ]
-                
-                [
-                  {
-                    id: 1, // should equal 2
-                    bar: 'foobar1' // should equal 'foobar2'
-                                   //
-                                   // -foobar1
-                                   // +foobar2
-                  },
-                  {
-                    id: 2, // should equal 1
-                    bar: 'foobar2' // should equal 'foobar1'
-                                   //
-                                   // -foobar2
-                                   // +foobar1
-                  }
-                ]`
-          )
-        );
+            ...assertion
+          );
+        });
     });
 
     describe('with the "exhaustively" flag', function() {
@@ -890,30 +896,35 @@ describe('unexpected-knex', function() {
               { id: 2, bar: 'foobar2' }
             ])
           )
-          .then(() =>
-            expect(
+          .then(() => {
+            const errorOutput = dontIndent`
+              expected 'select * from "foo"'
+              to have sorted rows exhaustively satisfying [ { id: 1, bar: 'foobar1' }, { id: 2 } ]
+              
+              expected [ { id: 1, bar: 'foobar1' }, { id: 2, bar: 'foobar2' } ] sorted by
+              function ascendingOrder(a, b) {
+                return parseInt(a.id) - parseInt(b.id);
+              } to exhaustively satisfy [ { id: 1, bar: 'foobar1' }, { id: 2 } ]
+              
+              [
+                { id: 1, bar: 'foobar1' },
+                {
+                  id: 2,
+                  bar: 'foobar2' // should be removed
+                }
+              ]`;
+            const assertion = assertErrorOuput
+              ? ['to be rejected with error satisfying', errorOutput]
+              : ['to be rejected'];
+            return expect(
               expect(
                 knex('foo'),
                 'to have sorted rows exhaustively satisfying',
                 [{ id: 1, bar: 'foobar1' }, { id: 2 }]
               ),
-              'to be rejected with',
-              dontIndent`
-                expected 'select * from "foo"'
-                to have sorted rows exhaustively satisfying [ { id: 1, bar: 'foobar1' }, { id: 2 } ]
-                
-                expected [ { id: 1, bar: 'foobar1' }, { id: 2, bar: 'foobar2' } ]
-                sorted by (a, b) => parseInt(a.id) - parseInt(b.id) to exhaustively satisfy [ { id: 1, bar: 'foobar1' }, { id: 2 } ]
-                
-                [
-                  { id: 1, bar: 'foobar1' },
-                  {
-                    id: 2,
-                    bar: 'foobar2' // should be removed
-                  }
-                ]`
-            )
-          );
+              ...assertion
+            );
+          });
       });
     });
 
@@ -959,6 +970,35 @@ describe('unexpected-knex', function() {
     });
 
     it("rejects with the correct error if the order of array items doesn't match", function() {
+      const errorOutput = dontIndent`
+      expected Promise
+      to be fulfilled with sorted rows satisfying [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ]
+      
+      expected [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ] sorted by
+      function ascendingOrder(a, b) {
+        return parseInt(a.id) - parseInt(b.id);
+      } to satisfy [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ]
+      
+      [
+        {
+          id: 1, // should equal 2
+          bar: 'foobar1' // should equal 'foobar2'
+                         //
+                         // -foobar1
+                         // +foobar2
+        },
+        {
+          id: 2, // should equal 1
+          bar: 'foobar2' // should equal 'foobar1'
+                         //
+                         // -foobar2
+                         // +foobar1
+        }
+      ]`;
+      const assertion = assertErrorOuput
+        ? ['to be rejected with error satisfying', errorOutput]
+        : ['to be rejected'];
+
       return expect(
         expect(
           Promise.resolve([
@@ -968,35 +1008,31 @@ describe('unexpected-knex', function() {
           'to be fulfilled with sorted rows satisfying',
           [{ id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' }]
         ),
-        'to be rejected with',
-        dontIndent`
-            expected Promise
-            to be fulfilled with sorted rows satisfying [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ]
-            
-            expected [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ]
-            sorted by (a, b) => parseInt(a.id) - parseInt(b.id) to satisfy [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ]
-            
-            [
-              {
-                id: 1, // should equal 2
-                bar: 'foobar1' // should equal 'foobar2'
-                               //
-                               // -foobar1
-                               // +foobar2
-              },
-              {
-                id: 2, // should equal 1
-                bar: 'foobar2' // should equal 'foobar1'
-                               //
-                               // -foobar2
-                               // +foobar1
-              }
-            ]`
+        ...assertion
       );
     });
 
     describe('with the "exhaustively" flag', function() {
       it('rejects if all rows are not exhaustively described in the expected output', function() {
+        const errorOutput = dontIndent`
+        expected Promise
+        to be fulfilled with sorted rows exhaustively satisfying [ { id: 1, bar: 'foobar1' }, { id: 2 } ]
+        
+        expected [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ] sorted by
+        function ascendingOrder(a, b) {
+          return parseInt(a.id) - parseInt(b.id);
+        } to exhaustively satisfy [ { id: 1, bar: 'foobar1' }, { id: 2 } ]
+        
+        [
+          { id: 1, bar: 'foobar1' },
+          {
+            id: 2,
+            bar: 'foobar2' // should be removed
+          }
+        ]`;
+        const assertion = assertErrorOuput
+          ? ['to be rejected with error satisfying', errorOutput]
+          : ['to be rejected'];
         return expect(
           expect(
             Promise.resolve([
@@ -1006,21 +1042,7 @@ describe('unexpected-knex', function() {
             'to be fulfilled with sorted rows exhaustively satisfying',
             [{ id: 1, bar: 'foobar1' }, { id: 2 }]
           ),
-          'to be rejected with',
-          dontIndent`
-          expected Promise
-          to be fulfilled with sorted rows exhaustively satisfying [ { id: 1, bar: 'foobar1' }, { id: 2 } ]
-          
-          expected [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ]
-          sorted by (a, b) => parseInt(a.id) - parseInt(b.id) to exhaustively satisfy [ { id: 1, bar: 'foobar1' }, { id: 2 } ]
-          
-          [
-            { id: 1, bar: 'foobar1' },
-            {
-              id: 2,
-              bar: 'foobar2' // should be removed
-            }
-          ]`
+          ...assertion
         );
       });
     });
