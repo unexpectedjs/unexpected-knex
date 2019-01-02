@@ -1351,7 +1351,7 @@ describe('unexpected-knex', function() {
             dontIndent`
                 expected 'select * from "foo"' to have rows satisfying
                 rows =>
-                              expect(rows, 'to equal', [])
+                  expect(rows, 'to equal', [])
 
                 [
                   { bar: 'foobar1' }, // should be removed
