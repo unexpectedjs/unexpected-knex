@@ -1297,8 +1297,10 @@ describe('unexpected-knex', function() {
         })
         .then(() =>
           expect(
-            expect(knex('foo'), 'to have rows satisfying', rows =>
-              expect(rows, 'to equal', [])
+            expect(
+              knex('foo'),
+              'to have rows satisfying',
+              expect.it(rows => expect(rows, 'to equal', []))
             ),
             'to be fulfilled'
           )
