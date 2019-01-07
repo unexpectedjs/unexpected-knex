@@ -1257,9 +1257,9 @@ describe('unexpected-knex', function() {
         )
         .then(() =>
           expect(
-            expect(knex('foo'), 'to have rows satisfying', rows =>
+            expect(knex('foo'), 'to have rows satisfying', expect.it(rows =>
               expect(rows, 'to equal', [{ bar: 'foobar1' }, { bar: 'foobar2' }])
-            ),
+            )),
             'to be fulfilled'
           )
         );
@@ -1273,9 +1273,9 @@ describe('unexpected-knex', function() {
         .then(() => knex('foo').insert({ bar: 'foobar1' }))
         .then(() =>
           expect(
-            expect(knex('foo'), 'to have rows satisfying', rows =>
+            expect(knex('foo'), 'to have rows satisfying', expect.it(rows =>
               expect(rows, 'to equal', [{ bar: 'foobar1' }])
-            ),
+            )),
             'to be fulfilled'
           )
         );
@@ -1288,9 +1288,9 @@ describe('unexpected-knex', function() {
         })
         .then(() =>
           expect(
-            expect(knex('foo'), 'to have rows satisfying', rows =>
+            expect(knex('foo'), 'to have rows satisfying', (rows =>
               expect(rows, 'to equal', [])
-            ),
+            )),
             'to be fulfilled'
           )
         );
@@ -1306,12 +1306,12 @@ describe('unexpected-knex', function() {
         )
         .then(() =>
           expect(
-            expect(knex('foo'), 'to have rows satisfying', rows =>
+            expect(knex('foo'), 'to have rows satisfying', expect.it(rows =>
               expect(rows, 'to equal', [
                 { bar: 'foobar1' },
                 { bar: 'foobar20' }
               ])
-            ),
+            )),
             'to be rejected with',
             dontIndent`
                 expected 'select * from "foo"' to have rows satisfying
@@ -1344,9 +1344,9 @@ describe('unexpected-knex', function() {
         )
         .then(() =>
           expect(
-            expect(knex('foo'), 'to have rows satisfying', rows =>
+            expect(knex('foo'), 'to have rows satisfying', expect.it(rows =>
               expect(rows, 'to equal', [])
-            ),
+            )),
             'to be rejected with',
             dontIndent`
                 expected 'select * from "foo"' to have rows satisfying
