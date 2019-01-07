@@ -1330,11 +1330,11 @@ describe('unexpected-knex', function() {
             'to be rejected with',
             dontIndent`
                 expected 'select * from "foo"' to have rows satisfying
-                rows =>
+                expect.it(rows =>
                   expect(rows, 'to equal', [
                     { bar: 'foobar1' },
                     { bar: 'foobar20' }
-                  ])
+                  ]))
 
                 [
                   { bar: 'foobar1' },
@@ -1367,8 +1367,8 @@ describe('unexpected-knex', function() {
             'to be rejected with',
             dontIndent`
                 expected 'select * from "foo"' to have rows satisfying
-                rows =>
-                  expect(rows, 'to equal', [])
+                expect.it(rows =>
+                  expect(rows, 'to equal', []))
 
                 [
                   { bar: 'foobar1' }, // should be removed
