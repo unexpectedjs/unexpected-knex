@@ -99,6 +99,10 @@ describe('unexpected-knex', function() {
       GRANT ALL ON SCHEMA public TO "${user}";
       GRANT ALL ON SCHEMA public TO public;
       COMMENT ON SCHEMA public IS 'standard public schema';
+      DROP SCHEMA IF EXISTS other CASCADE;
+      CREATE SCHEMA other;
+      GRANT ALL ON SCHEMA other TO "${user}";
+      GRANT ALL ON SCHEMA other TO public;
     `);
   });
 
@@ -255,7 +259,7 @@ describe('unexpected-knex', function() {
     });
   });
 
-  describe('<knex> to have column <object>', function() {
+  describe.only('<knex> to have column <object>', function() {
     it('fulfils if the column exists', function() {
       return knex.schema
         .createTable('foo', table => {
@@ -267,6 +271,36 @@ describe('unexpected-knex', function() {
             'to be fulfilled'
           )
         );
+    });
+
+    it('fulfils if the column exists within a schema', function() {
+      return knex.schema
+        .withSchema('other')
+        .createTable('other_foo', table => {
+          table.string('bar');
+        })
+        .then(() =>
+          expect(
+            expect(knex, 'to have column', { 'other.other_foo': 'bar' }),
+            'to be fulfilled'
+          )
+        );
+    });
+
+    it('rejects if the schema does not exist', function() {
+      return expect(
+        expect(knex, 'to have column', { 'test.foo': 'baz' }),
+        'to be rejected with',
+        /to have column { 'test.foo': 'baz' }/
+      );
+    });
+
+    it('rejects if the schema does exist but the table does not', function() {
+      return expect(
+        expect(knex, 'to have column', { 'other.lame': 'baz' }),
+        'to be rejected with',
+        /to have column { 'other.lame': 'baz' }/
+      );
     });
 
     it('rejects if the column does not exist', function() {
