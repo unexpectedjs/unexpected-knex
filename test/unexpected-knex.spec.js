@@ -259,7 +259,7 @@ describe('unexpected-knex', function() {
     });
   });
 
-  describe.only('<knex> to have column <object>', function() {
+  describe('<knex> to have column <object>', function() {
     it('fulfils if the column exists', function() {
       return knex.schema
         .createTable('foo', table => {
