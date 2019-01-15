@@ -260,19 +260,17 @@ describe('unexpected-knex', function() {
   });
 
   describe('<knex> with schema <string> <assertion?>', () => {
-    it('returns a Promise', function() {
-      return expect(knex, 'with schema', 'foo', 'to be a', Promise);
-    });
-
     it('populates the query with the schema provided', function() {
       return expect(
         knex,
         'with schema',
         'foo',
+        'with table',
+        'bar',
         'when passed as parameter to',
         query => query.toQuery(),
         'to be',
-        'select * from "foo"'
+        'select * from "foo"."bar"'
       );
     });
 
@@ -281,7 +279,7 @@ describe('unexpected-knex', function() {
         expect(knex, 'with schema', 'foo'),
         'to be rejected with error satisfying',
         // unexpected auto-runs the query since it's a thenable
-        { message: 'select * from "foo" - relation "foo" does not exist' }
+        { message: 'select * - SELECT * with no tables specified is not valid' }
       );
     });
 
@@ -290,7 +288,7 @@ describe('unexpected-knex', function() {
         () => expect(knex, 'with schema', 'foo', 'to equal', 'foo'),
         'to error with',
         dontIndent`
-                expected 'select * from "foo"' to equal 'foo'
+                expected 'select *' to equal 'foo'
                 `
       );
     });
