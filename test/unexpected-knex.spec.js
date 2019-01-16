@@ -283,7 +283,7 @@ describe('unexpected-knex', function() {
       );
     });
 
-    it('bubbles up errors from the delegate assertion', function() {
+    it('bubbles up errors to the delegate assertion', function() {
       return expect(
         () => expect(knex, 'with schema', 'foo', 'to equal', 'foo'),
         'to error with',
@@ -368,6 +368,14 @@ describe('unexpected-knex', function() {
           /to have column { 'other.lame': 'baz' }/
         );
       });
+
+      it('rejects if the schema does not exist', function() {
+        return expect(
+          expect(knex, 'to have column', { 'foo.bar': 'baz' }),
+          'to be rejected with',
+          /to have column { 'foo.bar': 'baz' }/
+        );
+      });
     });
   });
 
@@ -425,6 +433,13 @@ describe('unexpected-knex', function() {
       it('fulfils if the table does not exist', function() {
         return expect(
           expect(knex, 'not to have column', { 'lame.lame': 'baz' }),
+          'to be fulfilled'
+        );
+      });
+
+      it('fulfils if the schema does not exist', function() {
+        return expect(
+          expect(knex, 'not to have column', { 'bar.foo': 'baz' }),
           'to be fulfilled'
         );
       });
