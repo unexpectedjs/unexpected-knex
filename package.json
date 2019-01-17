@@ -1,6 +1,6 @@
 {
   "name": "unexpected-knex",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Support for testing Knex.js models and migrations using Unexpected",
   "main": "lib/unexpected-knex.js",
   "scripts": {
