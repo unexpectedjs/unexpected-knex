@@ -25,7 +25,7 @@
   "license": "MIT",
   "peerDependencies": {
     "knex": "^0.15.2",
-    "unexpected": "^10.27.0"
+    "unexpected": "^10.27.0 || ^11.0.0"
   },
   "devDependencies": {
     "coveralls": "^3.0.2",
@@ -41,7 +41,7 @@
     "nyc": "^13.1.0",
     "pg": "^7.7.1",
     "prettier": "~1.15.3",
-    "unexpected": "^10.40.2",
+    "unexpected": "^11.0.0",
     "unexpected-fs": "^3.0.0",
     "unexpected-require": "^2.1.0"
   },
