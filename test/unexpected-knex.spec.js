@@ -99,6 +99,10 @@ describe('unexpected-knex', function() {
       GRANT ALL ON SCHEMA public TO "${user}";
       GRANT ALL ON SCHEMA public TO public;
       COMMENT ON SCHEMA public IS 'standard public schema';
+      DROP SCHEMA IF EXISTS other CASCADE;
+      CREATE SCHEMA other;
+      GRANT ALL ON SCHEMA other TO "${user}";
+      GRANT ALL ON SCHEMA other TO public;
     `);
   });
 
@@ -255,6 +259,41 @@ describe('unexpected-knex', function() {
     });
   });
 
+  describe('<knex> with schema <string> <assertion?>', () => {
+    it('populates the query with the schema provided', function() {
+      return expect(
+        knex,
+        'with schema',
+        'foo',
+        'with table',
+        'bar',
+        'when passed as parameter to',
+        query => query.toQuery(),
+        'to be',
+        'select * from "foo"."bar"'
+      );
+    });
+
+    it('resolves with the query builder if no assertion is provided', function() {
+      return expect(
+        expect(knex, 'with schema', 'foo'),
+        'to be rejected with error satisfying',
+        // unexpected auto-runs the query since it's a thenable
+        { message: 'select * - SELECT * with no tables specified is not valid' }
+      );
+    });
+
+    it('bubbles up errors to the delegate assertion', function() {
+      return expect(
+        () => expect(knex, 'with schema', 'foo', 'to equal', 'foo'),
+        'to error with',
+        dontIndent`
+                expected 'select *' to equal 'foo'
+                `
+      );
+    });
+  });
+
   describe('<knex> to have column <object>', function() {
     it('fulfils if the column exists', function() {
       return knex.schema
@@ -297,6 +336,46 @@ describe('unexpected-knex', function() {
         'to error with',
         /Provide a single column in the form: { tableName: columnName }/
       );
+    });
+
+    describe('with schema', () => {
+      it('fulfils if the column exists', function() {
+        return knex.schema
+          .withSchema('other')
+          .createTable('other_foo', table => {
+            table.string('bar');
+          })
+          .then(() =>
+            expect(
+              expect(knex, 'to have column', { 'other.other_foo': 'bar' }),
+              'to be fulfilled'
+            )
+          );
+      });
+
+      it('rejects if the coumn does not exist', function() {
+        return expect(
+          expect(knex, 'to have column', { 'test.foo': 'baz' }),
+          'to be rejected with',
+          /to have column { 'test.foo': 'baz' }/
+        );
+      });
+
+      it('rejects if the table does not exist', function() {
+        return expect(
+          expect(knex, 'to have column', { 'other.lame': 'baz' }),
+          'to be rejected with',
+          /to have column { 'other.lame': 'baz' }/
+        );
+      });
+
+      it('rejects if the schema does not exist', function() {
+        return expect(
+          expect(knex, 'to have column', { 'foo.bar': 'baz' }),
+          'to be rejected with',
+          /to have column { 'foo.bar': 'baz' }/
+        );
+      });
     });
   });
 
@@ -341,6 +420,44 @@ describe('unexpected-knex', function() {
         'to error with',
         /Provide a single column in the form: { tableName: columnName }/
       );
+    });
+
+    describe('with schema', () => {
+      it('fulfils if the column does not exist', function() {
+        return expect(
+          expect(knex, 'not to have column', { 'other.other_foo': 'bar' }),
+          'to be fulfilled'
+        );
+      });
+
+      it('fulfils if the table does not exist', function() {
+        return expect(
+          expect(knex, 'not to have column', { 'lame.lame': 'baz' }),
+          'to be fulfilled'
+        );
+      });
+
+      it('fulfils if the schema does not exist', function() {
+        return expect(
+          expect(knex, 'not to have column', { 'bar.foo': 'baz' }),
+          'to be fulfilled'
+        );
+      });
+
+      it('rejects if the coumn does exist', function() {
+        return knex.schema
+          .withSchema('other')
+          .createTable('foo', table => {
+            table.string('bar');
+          })
+          .then(() =>
+            expect(
+              expect(knex, 'not to have column', { 'other.foo': 'bar' }),
+              'to be rejected with',
+              /not to have column { 'other.foo': 'bar' }/
+            )
+          );
+      });
     });
   });
 
