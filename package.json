@@ -63,6 +63,6 @@
   },
   "homepage": "https://github.com/unexpectedjs/unexpected-knex#readme",
   "dependencies": {
-    "proxyquire": "2.1.0"
+    "proxyquire": "2.1.1"
   }
 }
