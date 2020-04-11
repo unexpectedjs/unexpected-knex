@@ -2,7 +2,7 @@ const path = require('path');
 const Knex = require('knex');
 const QueryBuilder = require('knex/lib/query/builder');
 const unexpected = require('unexpected');
-const unexpectedFs = require('unexpected-fs');
+const mockFs = require('mock-fs');
 const unexpectedRequire = require('unexpected-require');
 const unexpectedKnex = require('../lib/unexpected-knex');
 const dontIndent = require('dedent-js');
@@ -37,9 +37,22 @@ describe('unexpected-knex', function() {
         })`;
   const expect = unexpected
     .clone()
-    .use(unexpectedFs)
     .use(unexpectedRequire)
     .use(unexpectedKnex)
+    .addAssertion(
+      '<any> with fs mocked out <object> <assertion>',
+      function (expect, subject, mocks) {
+        expect.errorMode = 'bubble';
+        mockFs(mocks);
+        return expect.shift()
+          .then(function () {
+            mockFs.restore();
+          }).catch(function (e) {
+            mockFs.restore();
+            throw e;
+          });
+      }
+    )
     .addAssertion(
       '<any> with the migrations directory containing <object> <assertion>',
       function(expect, subject, migrations, ...rest) {
