@@ -1692,7 +1692,7 @@ describe('unexpected-knex', function() {
           'to error with',
           expect.it(
             'when passed as parameter to',
-            function (error) {
+            function(error) {
               return error.message;
             },
             'to contain',
