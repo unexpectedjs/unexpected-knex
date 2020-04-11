@@ -3,6 +3,8 @@ services:
   postgres:
     image: postgres:9.6
     container_name: unexpected-knex
+    environment:
+      POSTGRES_PASSWORD: postgres
 
   unexpected-knex:
     build: .
