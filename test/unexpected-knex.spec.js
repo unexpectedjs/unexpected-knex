@@ -1690,14 +1690,14 @@ describe('unexpected-knex', function() {
               '1-foo.js'
             ),
           'to error with',
-          dontIndent`
-                    expected
-                    ${knexOutputBlock}
-                    to apply migration '1-foo.js'
-                      cannot load migration: Error({
-                        message: 'Cannot find module \\'${migrationsDirectory}/1-foo.js\\'',
-                        code: 'MODULE_NOT_FOUND'
-                      })`
+          expect.it(
+            'when passed as parameter to',
+            function(error) {
+              return error.message;
+            },
+            'to contain',
+            'MODULE_NOT_FOUND'
+          )
         );
       });
 
@@ -1711,14 +1711,14 @@ describe('unexpected-knex', function() {
               '1-foo.js'
             ),
           'to error with',
-          dontIndent`
-                    expected
-                    ${knexOutputBlock}
-                    to apply migration '1-foo.js'
-                      cannot load migration: Error({
-                        message: 'Cannot find module \\'${migrationsDirectory}/1-foo.js\\'',
-                        code: 'MODULE_NOT_FOUND'
-                      })`
+          expect.it(
+            'when passed as parameter to',
+            function(error) {
+              return error.message;
+            },
+            'to contain',
+            'MODULE_NOT_FOUND'
+          )
         );
       });
 
@@ -1741,14 +1741,14 @@ describe('unexpected-knex', function() {
               '1-foo.js'
             ),
           'to error with',
-          dontIndent`
-                    expected
-                    ${knexOutputBlock}
-                    to apply migration '1-foo.js'
-                      cannot load migration: Error({
-                        message: 'Cannot find module \\'${migrationsDirectory}/1-foo.js\\'',
-                        code: 'MODULE_NOT_FOUND'
-                      })`
+          expect.it(
+            'when passed as parameter to',
+            function(error) {
+              return error.message;
+            },
+            'to contain',
+            'MODULE_NOT_FOUND'
+          )
         );
       });
     });
