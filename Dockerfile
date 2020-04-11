@@ -2,5 +2,3 @@
 FROM node:6-alpine
 
 WORKDIR /usr/src/app
-
-COPY . .
