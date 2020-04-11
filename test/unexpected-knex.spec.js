@@ -1692,11 +1692,11 @@ describe('unexpected-knex', function() {
           'to error with',
           expect.it(
             'when passed as parameter to',
-            function(error) {
+            function (error) {
               return error.message;
             },
             'to contain',
-            'MODULE_NOT_FOUND'
+            'ENOENT'
           )
         );
       });
@@ -1711,14 +1711,11 @@ describe('unexpected-knex', function() {
               '1-foo.js'
             ),
           'to error with',
-          expect.it(
-            'when passed as parameter to',
-            function(error) {
-              return error.message;
-            },
-            'to contain',
-            'MODULE_NOT_FOUND'
-          )
+          dontIndent`
+                    expected
+                    ${knexOutputBlock}
+                    to apply migration '1-foo.js'
+                      cannot load migration: Error('migration \\'1-foo.js\\' not found')`
         );
       });
 
@@ -1741,14 +1738,11 @@ describe('unexpected-knex', function() {
               '1-foo.js'
             ),
           'to error with',
-          expect.it(
-            'when passed as parameter to',
-            function(error) {
-              return error.message;
-            },
-            'to contain',
-            'MODULE_NOT_FOUND'
-          )
+          dontIndent`
+                    expected
+                    ${knexOutputBlock}
+                    to apply migration '1-foo.js'
+                      cannot load migration: Error('migration \\'1-foo.js\\' not found')`
         );
       });
     });
