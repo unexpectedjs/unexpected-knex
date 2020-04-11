@@ -2,7 +2,7 @@ const path = require('path');
 const Knex = require('knex');
 const QueryBuilder = require('knex/lib/query/builder');
 const unexpected = require('unexpected');
-const unexpectedFs = require('unexpected-fs');
+const mockFs = require('mock-fs');
 const unexpectedRequire = require('unexpected-require');
 const unexpectedKnex = require('../lib/unexpected-knex');
 const dontIndent = require('dedent-js');
@@ -17,7 +17,7 @@ describe('unexpected-knex', function() {
       port: '5432',
       database: 'postgres',
       user: 'postgres',
-      password: ''
+      password: 'postgres'
     },
     migrations: { directory: './migrations' }
   });
@@ -31,15 +31,31 @@ describe('unexpected-knex', function() {
             port: '5432',
             database: 'postgres',
             user: 'postgres',
-            password: ''
+            password: 'postgres'
           },
           migrations: { directory: './migrations' }
         })`;
   const expect = unexpected
     .clone()
-    .use(unexpectedFs)
     .use(unexpectedRequire)
     .use(unexpectedKnex)
+    .addAssertion('<any> with fs mocked out <object> <assertion>', function(
+      expect,
+      subject,
+      mocks
+    ) {
+      expect.errorMode = 'bubble';
+      mockFs(mocks);
+      return expect
+        .shift()
+        .then(function() {
+          mockFs.restore();
+        })
+        .catch(function(e) {
+          mockFs.restore();
+          throw e;
+        });
+    })
     .addAssertion(
       '<any> with the migrations directory containing <object> <assertion>',
       function(expect, subject, migrations, ...rest) {
@@ -860,6 +876,34 @@ describe('unexpected-knex', function() {
         );
     });
 
+    it('displays the rejection reason for failed queries', function() {
+      const errorOutput = dontIndent`
+        expected 'select * from "foo"'
+        to have rows satisfying [ { id: 1, bar: 'foobar1' }, { id: 2, bar: 'foobar2' } ]
+          expected 'select * from "foo"'
+          to be fulfilled with value satisfying [ { id: 1, bar: 'foobar1' }, { id: 2, bar: 'foobar2' } ]
+            expected 'select * from "foo"' to be fulfilled
+              'select * from "foo"' unexpectedly rejected with error({
+                message: 'select * from "foo" - relation "foo" does not exist',
+                length: 102, severity: 'ERROR', code: '42P01', detail: undefined,
+                hint: undefined, position: '15', internalPosition: undefined,
+                internalQuery: undefined, where: undefined, schema: undefined,
+                table: undefined, dataType: undefined, constraint: undefined,
+                file: 'parse_relation.c', routine: 'parserOpenTable'
+              })
+        `;
+      const assertion = assertErrorOuput
+        ? ['to be rejected with error satisfying', errorOutput]
+        : ['to be rejected'];
+      return expect(
+        expect(knex('foo'), 'to have rows satisfying', [
+          { id: 1, bar: 'foobar1' },
+          { id: 2, bar: 'foobar2' }
+        ]),
+        ...assertion
+      );
+    });
+
     describe('with the "exhaustively" flag', function() {
       it('rejects if the row contains more columns than the expected output', function() {
         return knex.schema
@@ -1000,6 +1044,40 @@ describe('unexpected-knex', function() {
         });
     });
 
+    it('displays the rejection reason for failed queries', function() {
+      const errorOutput = dontIndent`
+        expected 'select * from "foo"'
+        to have sorted rows satisfying [ { id: 1, bar: 'foobar1' }, { id: 2, bar: 'foobar2' } ]
+          expected 'select * from "foo"' to have rows satisfying
+          expect.it('sorted by', function ascendingOrder(a, b) {
+            return parseInt(a.id) - parseInt(b.id);
+          }, 'to [exhaustively] satisfy', [ { id: 1, bar: 'foobar1' }, { id: 2, bar: 'foobar2' } ])
+            expected 'select * from "foo"' to be fulfilled with value satisfying
+            expect.it('sorted by', function ascendingOrder(a, b) {
+              return parseInt(a.id) - parseInt(b.id);
+            }, 'to [exhaustively] satisfy', [ { id: 1, bar: 'foobar1' }, { id: 2, bar: 'foobar2' } ])
+              expected 'select * from "foo"' to be fulfilled
+                'select * from "foo"' unexpectedly rejected with error({
+                  message: 'select * from "foo" - relation "foo" does not exist',
+                  length: 102, severity: 'ERROR', code: '42P01', detail: undefined,
+                  hint: undefined, position: '15', internalPosition: undefined,
+                  internalQuery: undefined, where: undefined, schema: undefined,
+                  table: undefined, dataType: undefined, constraint: undefined,
+                  file: 'parse_relation.c', routine: 'parserOpenTable'
+                })
+        `;
+      const assertion = assertErrorOuput
+        ? ['to be rejected with error satisfying', errorOutput]
+        : ['to be rejected'];
+      return expect(
+        expect(knex('foo'), 'to have sorted rows satisfying', [
+          { id: 1, bar: 'foobar1' },
+          { id: 2, bar: 'foobar2' }
+        ]),
+        ...assertion
+      );
+    });
+
     describe('with the "exhaustively" flag', function() {
       it('rejects if all rows are not exhaustively described in the expected output', function() {
         return knex.schema
@@ -1017,12 +1095,12 @@ describe('unexpected-knex', function() {
             const errorOutput = dontIndent`
               expected 'select * from "foo"'
               to have sorted rows exhaustively satisfying [ { id: 1, bar: 'foobar1' }, { id: 2 } ]
-              
+
               expected [ { id: 1, bar: 'foobar1' }, { id: 2, bar: 'foobar2' } ] sorted by
               function ascendingOrder(a, b) {
                 return parseInt(a.id) - parseInt(b.id);
               } to exhaustively satisfy [ { id: 1, bar: 'foobar1' }, { id: 2 } ]
-              
+
               [
                 { id: 1, bar: 'foobar1' },
                 {
@@ -1090,12 +1168,12 @@ describe('unexpected-knex', function() {
       const errorOutput = dontIndent`
       expected Promise
       to be fulfilled with sorted rows satisfying [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ]
-      
+
       expected [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ] sorted by
       function ascendingOrder(a, b) {
         return parseInt(a.id) - parseInt(b.id);
       } to satisfy [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ]
-      
+
       [
         {
           id: 1, // should equal 2
@@ -1129,17 +1207,40 @@ describe('unexpected-knex', function() {
       );
     });
 
+    it('displays the rejection reason for rejected promises', function() {
+      const errorOutput = dontIndent`
+      expected Promise to be fulfilled with sorted rows satisfying [ 'foo', 'bar' ]
+        expected Promise to be fulfilled with value satisfying
+        expect.it('sorted by', function ascendingOrder(a, b) {
+          return parseInt(a.id) - parseInt(b.id);
+        }, 'to [exhaustively] satisfy', [ 'foo', 'bar' ])
+          expected Promise to be fulfilled
+            Promise unexpectedly rejected with Error('foo')
+      `;
+      const assertion = assertErrorOuput
+        ? ['to be rejected with error satisfying', errorOutput]
+        : ['to be rejected'];
+      return expect(
+        expect(
+          Promise.reject(new Error('foo')),
+          'to be fulfilled with sorted rows satisfying',
+          ['foo', 'bar']
+        ),
+        ...assertion
+      );
+    });
+
     describe('with the "exhaustively" flag', function() {
       it('rejects if all rows are not exhaustively described in the expected output', function() {
         const errorOutput = dontIndent`
         expected Promise
         to be fulfilled with sorted rows exhaustively satisfying [ { id: 1, bar: 'foobar1' }, { id: 2 } ]
-        
+
         expected [ { id: 2, bar: 'foobar2' }, { id: 1, bar: 'foobar1' } ] sorted by
         function ascendingOrder(a, b) {
           return parseInt(a.id) - parseInt(b.id);
         } to exhaustively satisfy [ { id: 1, bar: 'foobar1' }, { id: 2 } ]
-        
+
         [
           { id: 1, bar: 'foobar1' },
           {
@@ -1205,9 +1306,34 @@ describe('unexpected-knex', function() {
             expect(knex('foo'), 'to be empty'),
             'to be rejected with',
             dontIndent`
-                expected 'select * from "foo"' to be empty`
+                expected 'select * from "foo"' to be empty
+
+                expected [ { bar: 'foobar1' }, { bar: 'foobar2' } ] to be empty`
           )
         );
+    });
+
+    it('displays the rejection reason for failed queries', function() {
+      const errorOutput = dontIndent`
+        expected 'select * from "foo"' to be empty
+          expected 'select * from "foo"'
+          to have rows satisfying expect.it('[not] to be empty')
+            expected 'select * from "foo"'
+            to be fulfilled with value satisfying expect.it('[not] to be empty')
+              expected 'select * from "foo"' to be fulfilled
+                'select * from "foo"' unexpectedly rejected with error({
+                  message: 'select * from "foo" - relation "foo" does not exist',
+                  length: 102, severity: 'ERROR', code: '42P01', detail: undefined,
+                  hint: undefined, position: '15', internalPosition: undefined,
+                  internalQuery: undefined, where: undefined, schema: undefined,
+                  table: undefined, dataType: undefined, constraint: undefined,
+                  file: 'parse_relation.c', routine: 'parserOpenTable'
+                })
+        `;
+      const assertion = assertErrorOuput
+        ? ['to be rejected with error satisfying', errorOutput]
+        : ['to be rejected'];
+      return expect(expect(knex('foo'), 'to be empty'), ...assertion);
     });
 
     describe("with the 'not' flag", function() {
@@ -1234,7 +1360,9 @@ describe('unexpected-knex', function() {
               expect(knex('foo'), 'not to be empty'),
               'to be rejected with',
               dontIndent`
-                    expected 'select * from "foo"' not to be empty`
+                    expected 'select * from "foo"' not to be empty
+
+                    expected [] not to be empty`
             )
           );
       });
@@ -1562,14 +1690,14 @@ describe('unexpected-knex', function() {
               '1-foo.js'
             ),
           'to error with',
-          dontIndent`
-                    expected
-                    ${knexOutputBlock}
-                    to apply migration '1-foo.js'
-                      cannot load migration: Error({
-                        message: 'Cannot find module \\'${migrationsDirectory}/1-foo.js\\'',
-                        code: 'MODULE_NOT_FOUND'
-                      })`
+          expect.it(
+            'when passed as parameter to',
+            function (error) {
+              return error.message;
+            },
+            'to contain',
+            'ENOENT'
+          )
         );
       });
 
@@ -1587,10 +1715,7 @@ describe('unexpected-knex', function() {
                     expected
                     ${knexOutputBlock}
                     to apply migration '1-foo.js'
-                      cannot load migration: Error({
-                        message: 'Cannot find module \\'${migrationsDirectory}/1-foo.js\\'',
-                        code: 'MODULE_NOT_FOUND'
-                      })`
+                      cannot load migration: Error('migration \\'1-foo.js\\' not found')`
         );
       });
 
@@ -1617,10 +1742,7 @@ describe('unexpected-knex', function() {
                     expected
                     ${knexOutputBlock}
                     to apply migration '1-foo.js'
-                      cannot load migration: Error({
-                        message: 'Cannot find module \\'${migrationsDirectory}/1-foo.js\\'',
-                        code: 'MODULE_NOT_FOUND'
-                      })`
+                      cannot load migration: Error('migration \\'1-foo.js\\' not found')`
         );
       });
     });
