@@ -39,20 +39,23 @@ describe('unexpected-knex', function() {
     .clone()
     .use(unexpectedRequire)
     .use(unexpectedKnex)
-    .addAssertion(
-      '<any> with fs mocked out <object> <assertion>',
-      function (expect, subject, mocks) {
-        expect.errorMode = 'bubble';
-        mockFs(mocks);
-        return expect.shift()
-          .then(function () {
-            mockFs.restore();
-          }).catch(function (e) {
-            mockFs.restore();
-            throw e;
-          });
-      }
-    )
+    .addAssertion('<any> with fs mocked out <object> <assertion>', function(
+      expect,
+      subject,
+      mocks
+    ) {
+      expect.errorMode = 'bubble';
+      mockFs(mocks);
+      return expect
+        .shift()
+        .then(function() {
+          mockFs.restore();
+        })
+        .catch(function(e) {
+          mockFs.restore();
+          throw e;
+        });
+    })
     .addAssertion(
       '<any> with the migrations directory containing <object> <assertion>',
       function(expect, subject, migrations, ...rest) {
@@ -873,7 +876,7 @@ describe('unexpected-knex', function() {
         );
     });
 
-    it("displays the rejection reason for failed queries", function () {
+    it('displays the rejection reason for failed queries', function() {
       const errorOutput = dontIndent`
         expected 'select * from "foo"'
         to have rows satisfying [ { id: 1, bar: 'foobar1' }, { id: 2, bar: 'foobar2' } ]
@@ -1041,8 +1044,8 @@ describe('unexpected-knex', function() {
         });
     });
 
-    it("displays the rejection reason for failed queries", function () {
-        const errorOutput = dontIndent`
+    it('displays the rejection reason for failed queries', function() {
+      const errorOutput = dontIndent`
         expected 'select * from "foo"'
         to have sorted rows satisfying [ { id: 1, bar: 'foobar1' }, { id: 2, bar: 'foobar2' } ]
           expected 'select * from "foo"' to have rows satisfying
@@ -1063,16 +1066,16 @@ describe('unexpected-knex', function() {
                   file: 'parse_relation.c', routine: 'parserOpenTable'
                 })
         `;
-        const assertion = assertErrorOuput
-          ? ['to be rejected with error satisfying', errorOutput]
-          : ['to be rejected'];
-        return expect(
-          expect(knex('foo'), 'to have sorted rows satisfying', [
-            { id: 1, bar: 'foobar1' },
-            { id: 2, bar: 'foobar2' }
-          ]),
-          ...assertion
-        );
+      const assertion = assertErrorOuput
+        ? ['to be rejected with error satisfying', errorOutput]
+        : ['to be rejected'];
+      return expect(
+        expect(knex('foo'), 'to have sorted rows satisfying', [
+          { id: 1, bar: 'foobar1' },
+          { id: 2, bar: 'foobar2' }
+        ]),
+        ...assertion
+      );
     });
 
     describe('with the "exhaustively" flag', function() {
@@ -1310,7 +1313,7 @@ describe('unexpected-knex', function() {
         );
     });
 
-    it("displays the rejection reason for failed queries", function () {
+    it('displays the rejection reason for failed queries', function() {
       const errorOutput = dontIndent`
         expected 'select * from "foo"' to be empty
           expected 'select * from "foo"'
@@ -1330,10 +1333,7 @@ describe('unexpected-knex', function() {
       const assertion = assertErrorOuput
         ? ['to be rejected with error satisfying', errorOutput]
         : ['to be rejected'];
-      return expect(
-        expect(knex('foo'), 'to be empty'),
-        ...assertion
-      );
+      return expect(expect(knex('foo'), 'to be empty'), ...assertion);
     });
 
     describe("with the 'not' flag", function() {
