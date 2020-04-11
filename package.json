@@ -8,9 +8,7 @@
     "lint:fix": "eslint --fix .",
     "test:mocha": "mocha --exit",
     "test": "docker-compose run --rm unexpected-knex",
-    "coverage": "ASSERT_ERROR_OUTPUT=false nyc mocha",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "ci": "npm-run-all lint coverage coveralls"
+    "coverage": "ASSERT_ERROR_OUTPUT=false nyc mocha"
   },
   "keywords": [
     "test",
@@ -28,7 +26,6 @@
     "unexpected": "^10.27.0 || ^11.0.0"
   },
   "devDependencies": {
-    "coveralls": "^3.0.2",
     "dedent-js": "^1.0.1",
     "eslint": "^5.12.0",
     "eslint-config-prettier": "^5.0.0",
