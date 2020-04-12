@@ -4,8 +4,8 @@
   "description": "Support for testing Knex.js models and migrations using Unexpected",
   "main": "lib/unexpected-knex.js",
   "scripts": {
-    "lint": "eslint . && prettier --check '**/*.js'",
-    "lint:fix": "eslint --fix . && prettier --write '**/*.js'",
+    "lint": "eslint . && prettier --check '**/*.{js,md}'",
+    "lint:fix": "eslint --fix . && prettier --write '**/*.{js,md}'",
     "test:mocha": "mocha --exit",
     "test": "docker-compose run --rm unexpected-knex",
     "coverage": "ASSERT_ERROR_OUTPUT=false nyc mocha"
