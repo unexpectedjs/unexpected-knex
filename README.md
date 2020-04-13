@@ -11,73 +11,75 @@ migrations using [Unexpected](http://unexpected.js.org/).
 ## Usage
 
 Say you have a migration that creates a "user" table:
+
 ```js
 // ./migrations/001-create-user.js
 exports.up = function (knex) {
-    return knex.schema.createTable('user', function (table) {
-        table.increments();
-        table.string('first_name');
-        table.string('last_name');
-    });
+  return knex.schema.createTable('user', function (table) {
+    table.increments();
+    table.string('first_name');
+    table.string('last_name');
+  });
 };
 
 exports.down = function (knex) {
-    return knex.schema.dropTable('user');
+  return knex.schema.dropTable('user');
 };
 ```
 
 You can test that this migration will apply without error and that it actually
 works against your database:
+
 ```js
 // ./test/migrations.spec.js
 var knexFactory = require('knex');
 var expect = require('unexpected').clone().use(require('unexpected-knex'));
 
 describe('migrations', function () {
-    function createKnex() {
-        // set up an in-memory SQLite database to run tests against
-        // requires you to install the 'sqlite3' module
-        return knexFactory({
-            client: 'sqlite3',
-            connection: {
-                filename: ':memory:'
-            },
-            migrations: {
-                directory: './migrations'
-            },
-            useNullAsDefault: true // recommended setting for sqlite3
-        });
-    }
-
-    var knex = createKnex();
-    afterEach(function () {
-        // drop the in-memory database and recreate it after each test to keep
-        // the unit tests independent of each other
-        return knex.destroy().then(function () {
-            knex = createKnex();
-        });
-    })
-
-    describe('001-create-user.js', function () {
-        it('creates a "user" table', function () {
-            return expect(knex, 'to apply migration', '001-create-user.js')
-                .then(function () {
-                    return expect(knex, 'to have table', 'user')
-                        .and('to have columns', {
-                            user: [ 'id', 'first_name', 'last_name']
-                        });
-                });
-        });
+  function createKnex() {
+    // set up an in-memory SQLite database to run tests against
+    // requires you to install the 'sqlite3' module
+    return knexFactory({
+      client: 'sqlite3',
+      connection: {
+        filename: ':memory:',
+      },
+      migrations: {
+        directory: './migrations',
+      },
+      useNullAsDefault: true, // recommended setting for sqlite3
     });
+  }
+
+  var knex = createKnex();
+  afterEach(function () {
+    // drop the in-memory database and recreate it after each test to keep
+    // the unit tests independent of each other
+    return knex.destroy().then(function () {
+      knex = createKnex();
+    });
+  });
+
+  describe('001-create-user.js', function () {
+    it('creates a "user" table', function () {
+      return expect(knex, 'to apply migration', '001-create-user.js').then(
+        function () {
+          return expect(knex, 'to have table', 'user').and('to have columns', {
+            user: ['id', 'first_name', 'last_name'],
+          });
+        }
+      );
+    });
+  });
 });
 ```
 
 > Ideally you want to test migrations using a sample database that is similar to
-your production database. This therefore assumes that you're running an SQLite
-database in production. If you run a postgres database and want to test
-against that instead, try the
-[mocha-docker-postgres](https://github.com/One-com/node-mocha-docker-postgres)
-project.
+> your production database. This therefore assumes that you're running an SQLite
+> database in production. If you run a postgres database and want to test
+> against that instead, try the
+> [mocha-docker-postgres](https://github.com/One-com/node-mocha-docker-postgres)
+> project.
 
 Alternatively, you can add the test in the migration file if you'd like to keep
 things in context:
@@ -88,13 +90,12 @@ things in context:
 // exports.up and exports.down omitted for brevity
 
 exports.test = function () {
-    this.testUp(function (knex, expect) {
-        return expect(knex, 'to have table', 'user')
-            .and('to have columns', {
-                user: [ 'id', 'first_name', 'last_name' ]
-            });
+  this.testUp(function (knex, expect) {
+    return expect(knex, 'to have table', 'user').and('to have columns', {
+      user: ['id', 'first_name', 'last_name'],
     });
-}
+  });
+};
 ```
 
 In this case, the unit test can be written as follows. The `to apply migration`
@@ -103,9 +104,9 @@ assertion will run the test defined in the migration file.
 ```js
 // ./test/migrations.spec.js
 describe('001-create-user.js', function () {
-    it('creates a "user" table', function () {
-        return expect(knex, 'to apply migration', '001-create-user.js');
-    });
+  it('creates a "user" table', function () {
+    return expect(knex, 'to apply migration', '001-create-user.js');
+  });
 });
 ```
 
@@ -117,26 +118,26 @@ running the migration or to tear it down:
 
 ```js
 exports.test = function () {
-    this.beforeUp(function (knex, expect) {
-        // called before running the up migration
-    });
+  this.beforeUp(function (knex, expect) {
+    // called before running the up migration
+  });
 
-    this.testUp(function (knex, expect) {
-        // called after running the up migration
-    });
+  this.testUp(function (knex, expect) {
+    // called after running the up migration
+  });
 
-    this.beforeDown(function (knex, expect) {
-        // called before running the down migration
-    });
+  this.beforeDown(function (knex, expect) {
+    // called before running the down migration
+  });
 
-    this.testDown(function (knex, expect) {
-        // called after running the down migration
-    });
+  this.testDown(function (knex, expect) {
+    // called after running the down migration
+  });
 
-    this.after(function (knex, expect) {
-        // called after everything else
-    });
-}
+  this.after(function (knex, expect) {
+    // called after everything else
+  });
+};
 ```
 
 All these hooks are optional. The actual order of calls is as follows:
@@ -151,7 +152,7 @@ All these hooks are optional. The actual order of calls is as follows:
 8. `after` hook (if provided)
 
 The up migration is ran twice in order to check that your down migration works
-*and* that the up migration can still be applied after your down migration.
+_and_ that the up migration can still be applied after your down migration.
 
 To demonstrate these hooks, we'll assume you now have to merge the "first_name"
 and "last_name" columns into a "name" column:
@@ -159,75 +160,87 @@ and "last_name" columns into a "name" column:
 ```js
 // ./migrations/002-merge-user-names.js
 exports.up = function (knex) {
-    return knex.schema.table('user', function (table) {
-        table.string('name');
-    }).then(function () {
-        return knex('user').select().then(function (users) {
-            return Promise.all(users.map(function (user) {
-                return knex('user')
-                    .where('id', '=', user.id)
-                    .update('name', user.first_name + ' ' + user.last_name);
-            }));
+  return knex.schema
+    .table('user', function (table) {
+      table.string('name');
+    })
+    .then(function () {
+      return knex('user')
+        .select()
+        .then(function (users) {
+          return Promise.all(
+            users.map(function (user) {
+              return knex('user')
+                .where('id', '=', user.id)
+                .update('name', user.first_name + ' ' + user.last_name);
+            })
+          );
         });
-    }).then(function () {
-        return knex.schema.table('user', function (table) {
-            table.dropColumn('first_name');
-            table.dropColumn('last_name');
-        });
+    })
+    .then(function () {
+      return knex.schema.table('user', function (table) {
+        table.dropColumn('first_name');
+        table.dropColumn('last_name');
+      });
     });
 };
 
 exports.down = function (knex) {
-    return knex.schema.table('user', function (table) {
-        table.string('first_name');
-        table.string('last_name');
-    }).then(function () {
-        return knex('user').select().then(function (users) {
-            return Promise.all(users.map(function (user) {
-                var names = user.name.split(' ');
-                return knex('user')
-                    .where('id', '=', user.id)
-                    .update({
-                        first_name: names[0],
-                        last_name: names[1]
-                    });
-            }));
+  return knex.schema
+    .table('user', function (table) {
+      table.string('first_name');
+      table.string('last_name');
+    })
+    .then(function () {
+      return knex('user')
+        .select()
+        .then(function (users) {
+          return Promise.all(
+            users.map(function (user) {
+              var names = user.name.split(' ');
+              return knex('user').where('id', '=', user.id).update({
+                first_name: names[0],
+                last_name: names[1],
+              });
+            })
+          );
         });
-    }).then(function () {
-        return knex.schema.table('user', function (table) {
-            table.dropColumn('name');
-        });
+    })
+    .then(function () {
+      return knex.schema.table('user', function (table) {
+        table.dropColumn('name');
+      });
     });
 };
 
 exports.test = function () {
-    this.beforeUp(function (knex) {
-        return knex('user').insert([
-            { first_name: 'John', last_name: 'Doe' },
-            { first_name: 'Jane', last_name: 'Doe' },
-            { first_name: 'John', last_name: 'Smith' }
-        ]);
-    });
+  this.beforeUp(function (knex) {
+    return knex('user').insert([
+      { first_name: 'John', last_name: 'Doe' },
+      { first_name: 'Jane', last_name: 'Doe' },
+      { first_name: 'John', last_name: 'Smith' },
+    ]);
+  });
 
-    this.testUp(function (knex, expect) {
-        return expect(knex, 'with table', 'user', 'to have rows satisfying', [
-            { name: 'John Doe', first_name: undefined, last_name: undefined },
-            { name: 'Jane Doe', first_name: undefined, last_name: undefined },
-            { name: 'John Smith', first_name: undefined, last_name: undefined }
-        ]);
-    });
+  this.testUp(function (knex, expect) {
+    return expect(knex, 'with table', 'user', 'to have rows satisfying', [
+      { name: 'John Doe', first_name: undefined, last_name: undefined },
+      { name: 'Jane Doe', first_name: undefined, last_name: undefined },
+      { name: 'John Smith', first_name: undefined, last_name: undefined },
+    ]);
+  });
 
-    this.testDown(function (knex, expect) {
-        return expect(knex, 'with table', 'user', 'to have rows satisfying', [
-            { first_name: 'John', last_name: 'Doe', name: undefined },
-            { first_name: 'Jane', last_name: 'Doe', name: undefined },
-            { first_name: 'John', last_name: 'Smith', name: undefined }
-        ]);
-    })
+  this.testDown(function (knex, expect) {
+    return expect(knex, 'with table', 'user', 'to have rows satisfying', [
+      { first_name: 'John', last_name: 'Doe', name: undefined },
+      { first_name: 'Jane', last_name: 'Doe', name: undefined },
+      { first_name: 'John', last_name: 'Smith', name: undefined },
+    ]);
+  });
 
-    this.after(function (knex) {
-        return knex('user').delete();
-    });
+  this.after(function (knex) {
+    return knex('user').delete();
+  });
 };
 ```
 
@@ -235,18 +248,19 @@ Then test this migration:
 
 ```js
 describe('002-merge-user-names.js', function () {
-    it('merges the first_name and last_name columns into a name column', function () {
-        return expect(knex, 'to apply migration', '002-merge-user-names.js');
-    });
+  it('merges the first_name and last_name columns into a name column', function () {
+    return expect(knex, 'to apply migration', '002-merge-user-names.js');
+  });
 });
 ```
-> There is an implicit implication here: that `to apply migration` *also*
-applies all migrations before the provided migration (when the filenames are
-sorted). So in this example, even if there was a `003-create-foo.js` migration
-in the migrations directory, the batch of filenames that will be handed to the
-Knex migrator are `['001-create-user.js', '002-merge-user-names.js']`. This is
-because new migrations are usually dependent on older migrations (TODO: it would
-be nice to have a graph of which migrations are related).
+
+> There is an implicit implication here: that `to apply migration` _also_
+> applies all migrations before the provided migration (when the filenames are
+> sorted). So in this example, even if there was a `003-create-foo.js` migration
+> in the migrations directory, the batch of filenames that will be handed to the
+> Knex migrator are `['001-create-user.js', '002-merge-user-names.js']`. This is
+> because new migrations are usually dependent on older migrations (TODO: it would
+> be nice to have a graph of which migrations are related).
 
 This is of course a minimal example, your migrations will typically be dealing
 with a lot more complex and sometimes unexpected user data which is a good reason
