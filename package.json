@@ -23,7 +23,7 @@
   "license": "MIT",
   "peerDependencies": {
     "knex": "^0.16.0",
-    "unexpected": "^10.27.0 || ^11.0.0"
+    "unexpected": "^10.27.0 || ^11.0.0 || ^12.0.0"
   },
   "devDependencies": {
     "dedent-js": "^1.0.1",
