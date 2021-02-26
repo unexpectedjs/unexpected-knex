@@ -28,7 +28,7 @@
   "devDependencies": {
     "dedent-js": "^1.0.1",
     "eslint": "^7.0.0",
-    "eslint-config-prettier": "^6.10.1",
+    "eslint-config-prettier": "^8.1.0",
     "eslint-config-pretty-standard": "^3.0.1",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.20.2",
