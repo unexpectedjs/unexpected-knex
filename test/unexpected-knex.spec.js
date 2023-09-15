@@ -8,6 +8,11 @@ const unexpectedKnex = require('../lib/unexpected-knex');
 const dontIndent = require('dedent-js');
 const assertErrorOuput = process.env.ASSERT_ERROR_OUTPUT !== 'false';
 
+// This file is `require`d here so that it's cached by Node.js before we go
+// ahead and mock out `require`, since knex's migrator require's it while doing
+// its job.
+require('knex/lib/util/import-file.js');
+
 describe('unexpected-knex', function () {
   const host = process.env.PGHOST || 'localhost';
   const knex = Knex({
