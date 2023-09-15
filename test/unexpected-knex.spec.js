@@ -8,10 +8,14 @@ const unexpectedKnex = require('../lib/unexpected-knex');
 const dontIndent = require('dedent-js');
 const assertErrorOuput = process.env.ASSERT_ERROR_OUTPUT !== 'false';
 
-// This file is `require`d here so that it's cached by Node.js before we go
-// ahead and mock out `require`, since knex's migrator require's it while doing
-// its job.
+// This file is `require`d lazily by Knex's migrator, so we have to require it
+// here so that it's cached by Node.js before we go on to mock out `require`.
 require('knex/lib/util/import-file.js');
+// Knex `require`s migrations lazily and in the process tries to figure out if
+// it should use `import` or `require`. The following hacks make it bypass those
+// checks and default to using `require`.
+if (process.env.npm_package_json) delete process.env.npm_package_json;
+if (process.env.npm_package_type) delete process.env.npm_package_type;
 
 describe('unexpected-knex', function () {
   const host = process.env.PGHOST || 'localhost';
