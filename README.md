@@ -67,7 +67,7 @@ describe('migrations', function () {
           return expect(knex, 'to have table', 'user').and('to have columns', {
             user: ['id', 'first_name', 'last_name'],
           });
-        }
+        },
       );
     });
   });
@@ -173,7 +173,7 @@ exports.up = function (knex) {
               return knex('user')
                 .where('id', '=', user.id)
                 .update('name', user.first_name + ' ' + user.last_name);
-            })
+            }),
           );
         });
     })
@@ -202,7 +202,7 @@ exports.down = function (knex) {
                 first_name: names[0],
                 last_name: names[1],
               });
-            })
+            }),
           );
         });
     })
