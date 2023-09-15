@@ -14,10 +14,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Use Node.js 12.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v1
         with:
-          node-version: 12.x
+          node-version: 18.x
 
       - name: Use npm cache
         uses: actions/cache@v1
@@ -80,7 +80,7 @@ jobs:
           PGPORT: 5432
 
       - name: Send coverage to coveralls
-        if: matrix.node-version == '12.x'
+        if: matrix.node-version == '18.x'
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
