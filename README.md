@@ -1,7 +1,7 @@
 # unexpected-knex
 
 [![NPM version](https://badge.fury.io/js/unexpected-knex.svg)](http://badge.fury.io/js/unexpected-knex)
-[![Build Status](https://travis-ci.org/unexpectedjs/unexpected-knex.svg?branch=master)](https://travis-ci.org/unexpectedjs/unexpected-knex)
+[![Build Status](https://github.com/unexpectedjs/unexpected-knex/actions/workflows/ci.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/unexpectedjs/unexpected-knex/badge.svg?branch=master)](https://coveralls.io/github/unexpectedjs/unexpected-knex?branch=master)
 [![Dependency Status](https://david-dm.org/unexpectedjs/unexpected-knex.svg)](https://david-dm.org/unexpectedjs/unexpected-knex)
 
