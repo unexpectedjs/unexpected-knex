@@ -10,7 +10,7 @@ const assertErrorOuput = process.env.ASSERT_ERROR_OUTPUT !== 'false';
 
 // This file is `require`d lazily by Knex's migrator, so we have to require it
 // here so that it's cached by Node.js before we go on to mock out `require`.
-require('knex/lib/util/import-file.js');
+require('knex/lib/migrations/util/import-file.js');
 // Knex `require`s migrations lazily and in the process tries to figure out if
 // it should use `import` or `require`. The following hacks make it bypass those
 // checks and default to using `require`.
