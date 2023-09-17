@@ -76,10 +76,7 @@ describe('migrations', function () {
 
 > Ideally you want to test migrations using a sample database that is similar to
 > your production database. This therefore assumes that you're running an SQLite
-> database in production. If you run a postgres database and want to test
-> against that instead, try the
-> [mocha-docker-postgres](https://github.com/One-com/node-mocha-docker-postgres)
-> project.
+> database in production.
 
 Alternatively, you can add the test in the migration file if you'd like to keep
 things in context:
@@ -110,11 +107,11 @@ describe('001-create-user.js', function () {
 });
 ```
 
-`exports.test` is consumed by this plugin and not by Knex. You only add if you
-would like to test your migrations using this plugin. In this example, `testUp`
-is a hook that is run by the `to apply migration` assertion after running the
-`up` migration. You can also add other hooks to set up the database before
-running the migration or to tear it down:
+`exports.test` is consumed by this plugin and not by Knex. You should only add
+it if you would like to test your migrations using this plugin. In this example,
+`testUp` is a hook that is run by the `to apply migration` assertion after
+running the `up` migration. You can also add other hooks to set up the database
+before running the migration or to tear it down:
 
 ```js
 exports.test = function () {
