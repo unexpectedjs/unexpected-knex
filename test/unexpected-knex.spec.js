@@ -1,6 +1,6 @@
 const path = require('path');
 const Knex = require('knex');
-const QueryBuilder = require('knex/lib/query/builder');
+const QueryBuilder = require('knex/lib/query/querybuilder');
 const unexpected = require('unexpected');
 const mockFs = require('mock-fs');
 const unexpectedRequire = require('unexpected-require');
